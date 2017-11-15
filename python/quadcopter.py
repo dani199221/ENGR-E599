@@ -21,11 +21,6 @@ A = np.array([[  1,   1,    1,   1],\
 
 
 #  ctf = km/kf kf and km are parameters that need to be measured 
-#  [ F  ]    [ 1   1   1      1]    [ F1 ] 
-#  | M1 |  = | 0  -d   0      d| *  | F2 | 
-#  | M2 |    | d   0   -d     0|    | F3 |
-#  [ M3 ]    [-ctf ctf -ctf ctf]    [ F4 ]
-
 class Quadcopter:
     def __init__(self,linear_pos, angular_pos):
         # Position [x, y, z] of the quadrotor in inertial frame
@@ -38,27 +33,58 @@ class Quadcopter:
         self.ang_velocity = np.zeros((3,1))
 
     #Rotation matrix R from the body frame to the inertial frame
-    def rotation_matrix(self): #inverse of matrix is its transpose
-        phi, theta, sy = self.orientation
+    def rotation_matrix(self, orientation): #inverse of matrix is its transpose
+        phi, theta, sy = orientation
         return np.array([ [cos(sy)*cos(theta), cos(sy)*sin(theta)*sin(phi) - sin(sy)*cos(phi), cos(sy)*sin(theta)*cos(phi) + sin(sy)*sin(phi)],\
                           [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
                           [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
                         ])
    
     #transformation matrix for angular velocities from  inertial frame to the body frame
-    def transformation_matrix(self):
-        phi, theta, sy = self.angular_pos
+    def transformation_matrix(self, angular_pos):
+        phi, theta, sy = angular_pos
         return np.array([[1, 0,                 -1*sin(theta)],\
                          [0, cos(phi),    cos(theta)*sin(phi)],\
                          [0, -1*sin(phi), cos(theta)*cos(phi)]\
                         ])
-    
+   
 
     #given F and M calculate the thrust of individual motors
-    def individual_motor_thrust(self, F, M):
-        Ainv = np.linalg.inv(A)
-        mat = np.insert(M,0,F)
-        return Ainv.dot(mat)
+    #equation (1) in paper
+    def individual_motor_thrust(self, f, M):
+        #  [ F  ]    [ 1   1   1      1]    [ F1 ] 
+        #  | M1 |  = | 0  -d   0      d| *  | F2 | 
+        #  | M2 |    | d   0   -d     0|    | F3 |
+        #  [ M3 ]    [-ctf ctf -ctf ctf]    [ F4 ]
+
+        Ainv = np.linalg.inv(A) #inverse of the 4x4 matrix
+        mat = np.insert(M,0,f) #make the matrix on the L.H.S of the equation
+        return Ainv.dot(mat)  #calculte F1 F2 F3 F4 and return 
+    
+    #equation (2) in paper
+    #def velocity(self, pos_des):
+    #equation (3) in paper
+    def acceleration(self, f, orientation):
+        # mvdot = mge3 - fRe3
+        # vdot = ge3 - f/m * R * e3
+        
+        #calculate f/m * R * e3
+        f_z = np.sum(F)/m
+        f_z = np.array([0,0,f_z]) 
+        rot_mat = self.rotation_matrix(orientation)
+        res = np.dot(rot_mat,f_z)
+
+        #calculate g_z
+        g_z = np.zrray([0,0,g])
+        
+        return  g_z - res
+    
+    #equation (4) in paper
+    #def R_dot(self, R, omega):
+    
+    #equation (5) in paper
+    #def 
+        
 
 
 def main():
