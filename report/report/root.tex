@@ -1,0 +1,149 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+% The following packages can be found on http:\\www.ctan.org
+%\usepackage{graphics} % for pdf, bitmapped graphics files
+%\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+%\usepackage{amsmath} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+
+\title{\LARGE \bf
+Geometric Tracking Control of a Quadrotor UAV on SE(3)
+}
+
+
+\author{Danial Nawaz, Malintha Fernando and Lantao Liu}
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+Simple PID controllers are very good at following given trajectories but fail when the quadrotor has to perform aggressive maneuvers. This is where geometric controller work more efficiently. The aim of this paper project is to implement a geometric controller for crazylfie 2.0 bases upon the research paper [1].The quadrotor has four input degrees of freedom, namely the magnitudes
+of the four rotor thrusts, that are used to control the six
+translational and rotational degrees of freedom, and to achieve
+asymptotic tracking of four outputs, namely, three position
+variables for the vehicle center of mass and the direction of
+one vehicle body-fixed axis. A globally defined model of the
+quadrotor UAV rigid body dynamics is introduced as a basis
+for the analysis. A nonlinear tracking controller is developed
+on the special Euclidean group SE(3) and it is shown to
+have desirable closed loop properties that are almost global.
+Several numerical examples, including an example in which the
+quadrotor recovers from being initially upside down, illustrate
+the versatility of the controller.
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+A quadrotor unmanned aerial vehicle (UAV) consists of
+two pairs of counter-rotating rotors and propellers, located
+at the vertices of a square frame. It is capable of vertical
+take-off and landing (VTOL), but it does not require com-
+plex mechanical linkages, such as swash plates or teeter
+hinges, that commonly appear in typical helicopters. Due
+to its simple mechanical structure, it has been envisaged for
+various applications such as surveillance or mobile sensor
+networks as well as for educational purposes.
+
+Geometric control is concerned with the development of
+control systems for dynamic systems evolving on nonlinear
+manifolds that cannot be globally identified with Euclidean
+spaces. By characterizing geometric proper-
+ties of nonlinear manifolds intrinsically, geometric control
+techniques provide unique insights to control theory that
+cannot be obtained from dynamic models represented using
+local coordinates. This approach has been applied to
+fully actuated rigid body dynamics on Lie groups to achieve
+almost global asymptotic stability.
+
+In this paper, we try to implement a geometric controller for
+a quadrotor based upon [1]. The dynamics of a quadrotor UAV is
+expressed globally on the configuration manifold of the
+special Euclidean group SE(3). We construct a tracking
+controller to follow prescribed trajectories for the center of
+mass and heading direction. It is shown that this controller
+exhibits almost global exponential attractiveness to the zero
+equilibrium of tracking errors. Since this is a coordinate-
+free control approach, it completely avoids singularities and
+complexities that arise when using local coordinates.
+Compared to other geometric control approaches for rigid
+body dynamics, this is distinct in the sense that it controls
+an underactuated quadrotor UAV to stabilize six translational
+and rotational degrees of freedom using four thrust inputs,
+while asymptotically tracking four outputs consisting of its
+position and heading direction. We demonstrate that this
+controller is particularly useful for complex, acrobatic ma-
+neuvers of a quadrotor UAV, such as recovering from being
+initially upside down.
+
+
+
+\section{Lietrature Review}
+
+
+\section{Quadrotor Dynamics}
+
+
+\section{CONCLUSIONS}
+
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{thebibliography}{99}
+
+\bibitem{c1} Lee, Taeyoung, et al. ?http://Ieeexplore.ieee.org/Document/5717652/.? Geometric Tracking Control of a Quadrotor UAV on SE(3) - IEEE Conference Publication, 2010, ieeexplore.ieee.org/document/5717652/. 
+
+
+
+\end{thebibliography}
+
+
+
+
+\end{document}
