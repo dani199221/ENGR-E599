@@ -39,12 +39,12 @@ class controller:
         
         return e_x, e_v, e_r, e_w 
     
-    def get_force(e_x, e_v, g, acc_desired, R):
+    def get_force(self, e_x, e_v, g, acc_desired, R):
         a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* acc_desired) 
         b = np.dot(R, np.array([0,0,1]))
         return np.dot(a,b)
 
-    def get_M(e_r, e_w, w, J, R, Rd, wd, wddot):
+    def get_M(self, e_r, e_w, w, J, R, Rd, wd, wddot):
         first = -1* self.k_r* e_r - k_w * e_w
         second = np.cross(w, np.dot(I, w))  
         a = np.dot(vee_map(w),R.transpose())
