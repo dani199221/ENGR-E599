@@ -50,42 +50,39 @@ class Quadcopter:
     def angular_velocity(self):
         return self.state[9:12]
  
+    #get the deriviative of the state based on the given F and M
     def state_dot(self, state, t, F, M):
         x, y, z, xdot, ydot, zdot, p, q, r, pd, qd, rd = state
-
-        # linear acceleration
+        
+       # linear acceleration equation(2) in the paper
         accel =   np.array([0, 0, g]) - 1.0/m * np.dot(self.rotation_matrix(),np.array([0, 0, F]))
        
-        # angular acceleration - Euler's equation of motion
+        # angular acceleration equation(5) in the paper
         omega = np.array([pd,qd,rd])
-        pqrdot = np.dot( np.linalg.inv(I) ,  M - np.cross(omega, np.dot(I,omega)) )
-        
-        state_dot = np.zeros(12)
-        state_dot[0]  = xdot
-        state_dot[1]  = ydot
-        state_dot[2]  = zdot
-        state_dot[3]  = accel[0]
-        state_dot[4]  = accel[1]
-        state_dot[5]  = accel[2]
-        state_dot[6]  = pd
-        state_dot[7]  = qd
-        state_dot[8]  = rd
-        state_dot[9] = pqrdot[0]
-        state_dot[10] = pqrdot[1]
-        state_dot[11] = pqrdot[2]
-        
+        ang_accel = np.dot( np.linalg.inv(I) ,  M - np.cross(omega, np.dot(I,omega)) )
+       
+        state_dot = np.array([xdot, ydot, zdot, accel[0], accel[1], accel[2], pd, qd, rd, ang_accel[0], ang_accel[1], ang_accel[2]])
+         
         return state_dot    
-
+    
+    #update the state of the quadrotor from based upon input F and M
     def update(self, dt, F, M):
         # limit thrust and Moment
-        L = d 
-        r = d
-        #prop_thrusts = params.invA.dot(np.r_[np.array([[F]]), M])
-        #prop_thrusts_clamped = np.maximum(np.minimum(prop_thrusts, params.maxF/4), params.minF/4)
-        #F = np.sum(prop_thrusts_clamped)
-        #M = params.A[1:].dot(prop_thrusts_clamped)
+        F = self.individual_motor_thust(F, M)
+        F = np.sum(F)
+        
         self.state = integrate.odeint(self.state_dot, self.state, [0,dt], args = (F, M))[1]
        
+    #get individual motor thrusts from the input F and M
+    def individual_motor_thust(self, F, M):
+        #  [ F  ]    [ 1   1   1      1]    [ F1 ] 
+        #  | M1 |  = | 0  -d   0      d| *  | F2 | 
+        #  | M2 |    | d   0   -d     0|    | F3 |
+        #  [ M3 ]    [-ctf ctf -ctf ctf]    [ F4 ]
+        Ainv = np.linalg.inv(A) #inverse of the 4x4 matrix
+        mat = np.insert(M,0,F) #make the matrix on the L.H.S of the equation
+        return Ainv.dot(mat)
+    
     #Rotation matrix R from the body frame to the inertial frame
     def rotation_matrix(self): #inverse of matrix is its transpose
         phi, theta, sy = self.state[6:9]
@@ -93,7 +90,7 @@ class Quadcopter:
                           [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
                           [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
                         ])
-
+    
 
 q = Quadcopter()
 q.update(0.1, 12, np.array([1,2,3]))
