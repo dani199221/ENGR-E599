@@ -21,13 +21,13 @@ class controller:
     def get_vel_error(self, v_curr, v_des):
         return np.array([v_curr[0]- v_des[0], v_curr[1]- v_des[1], v_curr[2]- v_des[2]])
         
-    def get_orientation_error(self, r_curr, r_des):
+    def get_orientation_error(self, R, Rd):
         # orien_err = 1/2 * ( RdesTranspose* R_curr - R_currTranspose * Rdes   )
-        return 0
+        return 1.0/2 * self.vee_map(  np.dot(Rd.transpose(), R) - np.dot(R.transpose(), Rd)  )
 
-    def get_ang_velocity_error(self, ang_vel_curr, ang_vel_des):
+    def get_ang_velocity_error(self, w, wd, R, Rd):
         # ang_vel_err = ang_vel_in_body_frame -RT * RD * ang_vel_desired
-        return 0
+        return w - np.dot (np.dot(R.transpose(), Rd), wd)
 
     def get_errors(self, curr_state, goal_state):
         x_des, v_des, r_des, ang_vel_des = get_goal_state() 
