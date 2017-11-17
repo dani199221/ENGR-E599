@@ -6,8 +6,8 @@ e2 = np.array([0,1,0])
 e3 = np.array([0,0,1])
 
 
-class controller:
-    def __init__(self, mass, curr_pose):
+class Controller:
+    def __init__(self, mass):
         self.mass = mass
         self.k_x = 0 
         self.k_v = 0
