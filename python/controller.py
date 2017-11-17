@@ -7,13 +7,11 @@ e3 = np.array([0,0,1])
 
 
 class controller:
-    def __init__(self, trajectory, mass, curr_pose):
+    def __init__(self, mass, curr_pose):
         self.mass = mass
-        self.trajectory = trajectory
-        
         self.k_x = 0 
         self.k_v = 0
-        self.k_R = 0
+        self.k_r = 0
         self.k_w = 0
 
     
@@ -41,6 +39,30 @@ class controller:
         
         return e_x, e_v, e_r, e_w 
     
-    def get_force():
+    def get_force(e_x, e_v, g, acc_desired, R):
+        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* acc_desired) 
+        b = np.dot(R, np.array([0,0,1]))
+        return np.dot(a,b)
+
+    def get_M(e_r, e_w, w, J, R, Rd, wd, wddot):
+        first = -1* self.k_r* e_r - k_w * e_w
+        second = np.cross(w, np.dot(I, w))  
+        a = np.dot(vee_map(w),R.transpose())
+        b = np.dot(Rd,wd)
+        c = np.dot(np.dot(R.transpose(),Rd),wddot)
+        third = -1 * np.dot(J, self.vee_map(np.dot(a,b) - c))
         
+        return first + second + third
+
+
+    def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
+        return np.array([ mat[2][1], mat[0][2], mat[1][0]])
+
+
+    def hat_map(self, mat): #returns the 3x3 skew symmetric matrix of the rotation matrix 
+        return np.array([[          0, -1 * mat[2],     mat[1]],
+                         [     mat[2],           0,-1 * mat[0]],
+                         [-1 * mat[1],      mat[0],         0 ]])
+ 
+
 
