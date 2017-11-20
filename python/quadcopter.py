@@ -66,12 +66,12 @@ class Quadcopter:
         return state_dot    
     
     #update the state of the quadrotor from based upon input F and M
-    def update(self, dt, F, M):
+    def update(self,t, dt, F, M):
         # limit thrust and Moment
         F = self.individual_motor_thust(F, M)
         F = np.sum(F)
         
-        self.state = integrate.odeint(self.state_dot, self.state, [0,dt], args = (F, M))[1]
+        self.state = integrate.odeint(self.state_dot, self.state, [t,t+dt], args = (F, M))[1]
        
     #get individual motor thrusts from the input F and M
     def individual_motor_thust(self, F, M):
@@ -82,6 +82,18 @@ class Quadcopter:
         Ainv = np.linalg.inv(A) #inverse of the 4x4 matrix
         mat = np.insert(M,0,F) #make the matrix on the L.H.S of the equation
         return Ainv.dot(mat)
+
+    #get F and M from f1 f2 f3 f4
+    def getFM(self, f1,f2,f3,f4):
+        #  [ F  ]    [ 1   1   1      1]    [ F1 ] 
+        #  | M1 |  = | 0  -d   0      d| *  | F2 | 
+        #  | M2 |    | d   0   -d     0|    | F3 |
+        #  [ M3 ]    [-ctf ctf -ctf ctf]    [ F4 ]
+        a = np.array([f1,f2,f3,f4]) 
+        res = A.dot(a)
+        f = res[0]
+        M = np.array([res[1], res[2], res[3]])
+        return f,M 
     
     #Rotation matrix R from the body frame to the inertial frame
     def rotation_matrix(self): #inverse of matrix is its transpose
@@ -90,10 +102,9 @@ class Quadcopter:
                           [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
                           [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
                         ])
-    
+   
 
-q = Quadcopter()
-q.update(0.1, 12, np.array([1,2,3]))
-print q.state
-q.update(0.1, 12, np.array([1,2,3]))
-print q.state
+
+
+        
+
