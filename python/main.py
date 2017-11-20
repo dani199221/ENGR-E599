@@ -14,7 +14,7 @@ if __name__ == '__main__':
     pre = np.array([0,0,0])
     itr = [x * 0.1 for x in range(0,100)]
     for t in range (0, len(itr)):
-        F,M = quad.getFM(-0.027*9.81/4,-0.027*9.81/4,-0.027*9.81/4,-0.027*9.81/4,)
+        F,M = quad.getFM(0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,)
         quad.update(t,0.1,F, M)
         pos = quad.position()
         vel = quad.velocity()
@@ -23,6 +23,7 @@ if __name__ == '__main__':
         print pos-pre
         pre = pos
 
-    plt.plot(itr, z, color='lightblue', linewidth=3)
+    plt.plot(itr, v, color='lightblue', linewidth=3)
+    #plt.plot(itr, z, color='lightblue', linewidth=3)
     plt.show()
 

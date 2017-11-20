@@ -56,7 +56,6 @@ class Quadcopter:
         
        # linear acceleration equation(2) in the paper
         accel =   np.array([0, 0, g]) - 1.0/m * np.dot(self.rotation_matrix(),np.array([0, 0, F]))
-       
         # angular acceleration equation(5) in the paper
         omega = np.array([pd,qd,rd])
         ang_accel = np.dot( np.linalg.inv(I) ,  M - np.cross(omega, np.dot(I,omega)) )
@@ -67,7 +66,6 @@ class Quadcopter:
     
     #update the state of the quadrotor from based upon input F and M
     def update(self,t, dt, F, M):
-        # limit thrust and Moment
         F = self.individual_motor_thust(F, M)
         F = np.sum(F)
         
