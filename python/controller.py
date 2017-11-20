@@ -57,13 +57,15 @@ class Controller:
         return first + second + third
     
     def get_goal_state(self):
+        #yet to implement
         return np.array([0,0,0,0,0,0,0,0,0])
-
+    
     def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
         return np.array([ mat[2][1], mat[0][2], mat[1][0]])
 
 
-    def hat_map(self, mat): #returns the 3x3 skew symmetric matrix of the rotation matrix 
+    #https://www.wikiwand.com/en/Skew-symmetric_matrix
+    def hat_map(self, mat): #returns the 3x3 skew symmetric matrix of the rotation matrix which is 3x1 
         return np.array([[          0, -1 * mat[2],     mat[1]],
                          [     mat[2],           0,-1 * mat[0]],
                          [-1 * mat[1],      mat[0],         0 ]])
