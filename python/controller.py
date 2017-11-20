@@ -5,16 +5,18 @@ e1 = np.array([1,0,0])
 e2 = np.array([0,1,0])
 e3 = np.array([0,0,1])
 
-
 class Controller:
-    def __init__(self, mass):
+    def __init__(self, mass,t, xd, vd, ad, bd):
         self.mass = mass
         self.k_x = 0 
         self.k_v = 0
         self.k_r = 0
         self.k_w = 0
-
-    
+        self.t = t   #array of time
+        self.xd = vd #array of desired velocity over time
+        self.ad = ad #array of desired acceleration over time
+        self.bd = bd #array of desired direction over time
+            
     def get_pos_error(self, x_curr, x_des):
         return np.array([x_curr[0]- x_des[0], x_curr[1]- x_des[1], x_curr[2]- x_des[2]])
 
