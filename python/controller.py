@@ -30,17 +30,19 @@ class Controller:
         return w - np.dot (np.dot(R.transpose(), Rd), wd)
 
     def get_errors(self, curr_state, goal_state):
-        x_des, v_des, r_des, ang_vel_des = get_goal_state() 
+        #current and desired variables
+        x_curr, v_curr, r_curr, w_curr = curr_state[0:3],curr_state[3:6],curr_state[6:9],curr_state[9:12] 
+        x_des, v_des, r_des, w_des = goal_state[0:3],goal_state[3:6],goal_state[6:9],goal_state[9:12] 
         
         e_x = get_pos_error(x_curr, x_des)
         e_v = get_vel_error(v_curr, v_des) 
         e_r = get_orientation_error(r_curr, r_des)
-        e_w = get_ang_velocity_error(ang_vel_curr, ang_vel_des)
+        e_w = get_ang_velocity_error(w_curr, w_des)
         
         return e_x, e_v, e_r, e_w 
     
-    def get_force(self, e_x, e_v, g, acc_desired, R):
-        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* acc_desired) 
+    def get_force(self, e_x, e_v, g, a_des, R):
+        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* ac_des) 
         b = np.dot(R, np.array([0,0,1]))
         return np.dot(a,b)
 
@@ -53,7 +55,9 @@ class Controller:
         third = -1 * np.dot(J, self.vee_map(np.dot(a,b) - c))
         
         return first + second + third
-
+    
+    def get_goal_state(self):
+        return np.array([0,0,0,0,0,0,0,0,0])
 
     def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
         return np.array([ mat[2][1], mat[0][2], mat[1][0]])
