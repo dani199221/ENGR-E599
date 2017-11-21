@@ -18,8 +18,6 @@ class Controller:
         self.vd = vd #dict of desired acceleration over time
         self.ad = ad #dict of desired acceleration over time
         self.b1d = b1d #dict of desired direction over time
-    
-    
 
     def getFM(self, curr_state, t):
         
@@ -48,7 +46,8 @@ class Controller:
         #get e_w
         w = curr_state[9:12]
         #calculate wd
-        wd = self.vee_map(np.dot(Rd, Rd.T) )
+        #still not clear
+        wd = self.vee_map(np.dot(Rd, Rd.T))
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
         #calculate f
@@ -69,10 +68,8 @@ class Controller:
  
         return F,M
 
-  
     def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
         return np.array([ mat[2][1], mat[0][2], mat[1][0]])
-
 
     #https://www.wikiwand.com/en/Skew-symmetric_matrix
     def hat_map(self, mat): #returns the 3x3 skew symmetric matrix of the rotation matrix which is 3x1 
@@ -80,7 +77,6 @@ class Controller:
                          [     mat[2],           0,-1 * mat[0]],
                          [-1 * mat[1],      mat[0],         0 ]])
  
-
     def rotation_matrix(self, state): #inverse of matrix is its transpose
         phi, theta, sy = state
         return np.array([ [cos(sy)*cos(theta), cos(sy)*sin(theta)*sin(phi) - sin(sy)*cos(phi), cos(sy)*sin(theta)*cos(phi) + sin(sy)*sin(phi)],\
