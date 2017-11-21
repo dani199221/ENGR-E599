@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.integrate as integrate
 import math
-from math import sin, cos, tan, expe1 = np.array([1,0,0])
+from math import sin, cos, tan
 e2 = np.array([0,1,0])
 e3 = np.array([0,0,1])
 
@@ -49,7 +49,7 @@ class Controller:
         #still not clear
         #need to calculate  Rd_dot somehow 
         Rd_dot = 0 # how to calculate this???
-        wd = self.vee_map(np.dot(Rd_dot, Rd.T))
+        wd = self.vee_map(np.dot(Rd.T,Rd_dot))
 
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
