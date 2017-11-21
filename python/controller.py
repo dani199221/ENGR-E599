@@ -43,12 +43,12 @@ class Controller:
         R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
         #get e_R
-        e_R = 1.0/2 * vee_map(np.dot(Rd.T, R) - np.dot(R.t, Rd))
+        e_R = 1.0/2 * vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
         #get e_w
         w = curr_state[9:12]
-        #how to calculate wd???
-        wd = 0
+        #calculate wd
+        wd = self.vee_map(np.dot(Rd, Rd.T) )
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
         #calculate f
