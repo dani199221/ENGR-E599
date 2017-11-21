@@ -19,7 +19,7 @@ class Controller:
         self.ad = ad #dict of desired acceleration over time
         self.b1d = b1d #dict of desired direction over time
 
-    def getFM(self, curr_state, t):
+    def getFM(self, curr_state, t, dt):
         
         #get e_x e_v
         e_x = curr_state[0:3] - self.xd[t]
@@ -43,11 +43,14 @@ class Controller:
         #get e_R
         e_R = 1.0/2 * vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
-        #get e_w
+        #get e_w and pre requisites
         w = curr_state[9:12]
         #calculate wd
         #still not clear
-        wd = self.vee_map(np.dot(Rd, Rd.T))
+        #need to calculate  Rd_dot somehow 
+        Rd_dot = 0 # how to calculate this???
+        wd = self.vee_map(np.dot(Rd_dot, Rd.T))
+
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
         #calculate f
