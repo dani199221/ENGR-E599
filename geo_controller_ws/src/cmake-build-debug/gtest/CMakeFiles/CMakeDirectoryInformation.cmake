@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/usr/src/gtest")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/malintha/geo_controller_ws/src/cmake-build-debug")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

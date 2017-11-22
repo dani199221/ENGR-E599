@@ -67,8 +67,8 @@ set(geo_controller_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(geo_controller_SOURCE_PREFIX /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/geo_controller)
-  set(geo_controller_DEVEL_PREFIX /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel)
+  set(geo_controller_SOURCE_PREFIX /home/malintha/geo_controller_ws/src/geo_controller)
+  set(geo_controller_DEVEL_PREFIX /home/malintha/geo_controller_ws/src/cmake-build-debug/devel)
   set(geo_controller_INSTALL_PREFIX "")
   set(geo_controller_PREFIX ${geo_controller_DEVEL_PREFIX})
 else()
@@ -103,7 +103,7 @@ if(NOT " " STREQUAL " ")
         message(FATAL_ERROR "Project 'geo_controller' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  Ask the maintainer 'malintha <malintha@todo.todo>' to fix it.")
       endif()
     else()
-      message(FATAL_ERROR "Project 'geo_controller' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/geo_controller/${idir}'.  Ask the maintainer 'malintha <malintha@todo.todo>' to fix it.")
+      message(FATAL_ERROR "Project 'geo_controller' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/malintha/geo_controller_ws/src/geo_controller/${idir}'.  Ask the maintainer 'malintha <malintha@todo.todo>' to fix it.")
     endif()
     _list_append_unique(geo_controller_INCLUDE_DIRS ${include})
   endforeach()
@@ -122,7 +122,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel/lib;/opt/ros/kinetic/lib)
+    foreach(path /home/malintha/geo_controller_ws/src/cmake-build-debug/devel/lib;/opt/ros/kinetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

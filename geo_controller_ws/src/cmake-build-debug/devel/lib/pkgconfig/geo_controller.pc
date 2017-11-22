@@ -1,8 +1,8 @@
-prefix=/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel
+prefix=/home/malintha/geo_controller_ws/src/cmake-build-debug/devel
 
 Name: geo_controller
 Description: Description of geo_controller
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel/lib 
+Libs: -L/home/malintha/geo_controller_ws/src/cmake-build-debug/devel/lib 
 Requires: 

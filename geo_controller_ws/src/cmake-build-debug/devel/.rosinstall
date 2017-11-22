@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel/setup.sh
+    local-name: /home/malintha/geo_controller_ws/src/cmake-build-debug/devel/setup.sh

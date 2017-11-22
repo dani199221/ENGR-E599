@@ -1,4 +1,4 @@
-# Install script for directory: /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/geo_controller
+# Install script for directory: /home/malintha/geo_controller_ws/src/geo_controller
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,17 +33,17 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controller.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/malintha/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controller.pc")
 endif()
 
 if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/geo_controller/cmake" TYPE FILE FILES
-    "/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controllerConfig.cmake"
-    "/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controllerConfig-version.cmake"
+    "/home/malintha/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controllerConfig.cmake"
+    "/home/malintha/geo_controller_ws/src/cmake-build-debug/geo_controller/catkin_generated/installspace/geo_controllerConfig-version.cmake"
     )
 endif()
 
 if("${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/geo_controller" TYPE FILE FILES "/home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/geo_controller/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/geo_controller" TYPE FILE FILES "/home/malintha/geo_controller_ws/src/geo_controller/package.xml")
 endif()
 

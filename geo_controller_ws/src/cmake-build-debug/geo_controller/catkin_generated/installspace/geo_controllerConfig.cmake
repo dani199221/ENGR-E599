@@ -67,8 +67,8 @@ set(geo_controller_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(geo_controller_SOURCE_PREFIX /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/geo_controller)
-  set(geo_controller_DEVEL_PREFIX /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/devel)
+  set(geo_controller_SOURCE_PREFIX /home/malintha/geo_controller_ws/src/geo_controller)
+  set(geo_controller_DEVEL_PREFIX /home/malintha/geo_controller_ws/src/cmake-build-debug/devel)
   set(geo_controller_INSTALL_PREFIX "")
   set(geo_controller_PREFIX ${geo_controller_DEVEL_PREFIX})
 else()

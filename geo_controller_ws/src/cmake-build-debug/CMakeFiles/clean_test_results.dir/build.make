@@ -43,10 +43,10 @@ RM = /home/malintha/clion-2017.2.2/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src
+CMAKE_SOURCE_DIR = /home/malintha/geo_controller_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug
+CMAKE_BINARY_DIR = /home/malintha/geo_controller_ws/src/cmake-build-debug
 
 # Utility rule file for clean_test_results.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-b
 include CMakeFiles/clean_test_results.dir/progress.make
 
 CMakeFiles/clean_test_results:
-	/usr/bin/python /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/test_results
+	/usr/bin/python /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/malintha/geo_controller_ws/src/cmake-build-debug/test_results
 
 clean_test_results: CMakeFiles/clean_test_results
 clean_test_results: CMakeFiles/clean_test_results.dir/build.make
@@ -71,6 +71,6 @@ CMakeFiles/clean_test_results.dir/clean:
 .PHONY : CMakeFiles/clean_test_results.dir/clean
 
 CMakeFiles/clean_test_results.dir/depend:
-	cd /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/malintha/geo_controller_ws/src/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/malintha/geo_controller_ws/src /home/malintha/geo_controller_ws/src /home/malintha/geo_controller_ws/src/cmake-build-debug /home/malintha/geo_controller_ws/src/cmake-build-debug /home/malintha/geo_controller_ws/src/cmake-build-debug/CMakeFiles/clean_test_results.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/clean_test_results.dir/depend
 

@@ -8,4 +8,4 @@ set(SOURCE_FILES
 
 add_executable(src ${SOURCE_FILES})
 
-#link_directories(/usr/local/include)
+link_directories(/usr/local/include)

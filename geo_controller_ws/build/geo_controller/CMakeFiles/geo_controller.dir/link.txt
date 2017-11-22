@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++0x    CMakeFiles/geo_controller.dir/src/controller.cpp.o  -o /home/malintha/geo_controller_ws/devel/lib/geo_controller/geo_controller -rdynamic 

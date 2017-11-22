@@ -43,10 +43,10 @@ RM = /home/malintha/clion-2017.2.2/bin/cmake/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src
+CMAKE_SOURCE_DIR = /home/malintha/geo_controller_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug
+CMAKE_BINARY_DIR = /home/malintha/geo_controller_ws/src/cmake-build-debug
 
 # Utility rule file for doxygen.
 
@@ -67,6 +67,6 @@ CMakeFiles/doxygen.dir/clean:
 .PHONY : CMakeFiles/doxygen.dir/clean
 
 CMakeFiles/doxygen.dir/depend:
-	cd /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug /home/malintha/ra/uav/ENGR-E599/geo_controller_ws/src/cmake-build-debug/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/malintha/geo_controller_ws/src/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/malintha/geo_controller_ws/src /home/malintha/geo_controller_ws/src /home/malintha/geo_controller_ws/src/cmake-build-debug /home/malintha/geo_controller_ws/src/cmake-build-debug /home/malintha/geo_controller_ws/src/cmake-build-debug/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/doxygen.dir/depend
 
