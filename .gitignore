@@ -1,3 +1,4 @@
-geo_controller_ws/build/*
-geo_controller_ws/devel/*
-geo_controller_ws/src/cmake-build-debug/*
+geo_controller_ws/build/
+geo_controller_ws/devel
+geo_controller_ws/src/cmake-build-debug/
+geo_controller_ws/src/.idea
