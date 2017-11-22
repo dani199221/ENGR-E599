@@ -1,70 +1,79 @@
 import numpy as np
-
-
+import scipy.integrate as integrate
+import math
+from math import sin, cos, tan, exp
 e1 = np.array([1,0,0])
 e2 = np.array([0,1,0])
 e3 = np.array([0,0,1])
 
 class Controller:
     def __init__(self, mass,t, xd, vd, ad, bd):
+        self.g = 9.81
         self.mass = mass
         self.k_x = 0 
         self.k_v = 0
         self.k_r = 0
         self.k_w = 0
         self.t = t   #array of time
-        self.xd = vd #array of desired velocity over time
-        self.ad = ad #array of desired acceleration over time
-        self.bd = bd #array of desired direction over time
-            
-    def get_pos_error(self, x_curr, x_des):
-        return np.array([x_curr[0]- x_des[0], x_curr[1]- x_des[1], x_curr[2]- x_des[2]])
+        self.xd = xd #dict of desired velocity over time
+        self.vd = vd #dict of desired acceleration over time
+        self.ad = ad #dict of desired acceleration over time
+        self.b1d = b1d #dict of desired direction over time
 
-    def get_vel_error(self, v_curr, v_des):
-        return np.array([v_curr[0]- v_des[0], v_curr[1]- v_des[1], v_curr[2]- v_des[2]])
+    def getFM(self, curr_state, t, dt):
         
-    def get_orientation_error(self, R, Rd):
-        # orien_err = 1/2 * ( RdesTranspose* R_curr - R_currTranspose * Rdes   )
-        return 1.0/2 * self.vee_map(  np.dot(Rd.transpose(), R) - np.dot(R.transpose(), Rd)  )
+        #get e_x e_v
+        e_x = curr_state[0:3] - self.xd[t]
+        e_v = curr_state[3:6] - self.vd[t]
+        
+        #steps to get R and Rdesired
+        
+        ac_des = self.ad[t] #get the desired acceleration
+        
+        res = -1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,self.g]) + self.mass* ac_des
+        b3d = res/np.linalg.norm(res) #get b3d from eq 12
 
-    def get_ang_velocity_error(self, w, wd, R, Rd):
-        # ang_vel_err = ang_vel_in_body_frame -RT * RD * ang_vel_desired
-        return w - np.dot (np.dot(R.transpose(), Rd), wd)
+        b2d = np.cross(b3d, b1d)/np.linalg.norm(np.cross(b3d, b1d)) #get b2d from b3d and b1d
+        new_b1d = np.cross(b2d,b3d) #get new b1d from corss product of b2d and b3d
 
-    def get_errors(self, curr_state, goal_state):
-        #current and desired variables
-        x_curr, v_curr, r_curr, w_curr = curr_state[0:3],curr_state[3:6],curr_state[6:9],curr_state[9:12] 
-        x_des, v_des, r_des, w_des = goal_state[0:3],goal_state[3:6],goal_state[6:9],goal_state[9:12] 
+        #ger Rd from new_bq, b2d,b3d
+        Rd =  np.array([[new_b1d[0], b2d[0], b3d[0]], [new_b1d[1], b2d[1], b3d[1]], [new_b1d[2], b2d[2], b3d[2]]]) 
+
+        R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
-        e_x = get_pos_error(x_curr, x_des)
-        e_v = get_vel_error(v_curr, v_des) 
-        e_r = get_orientation_error(r_curr, r_des)
-        e_w = get_ang_velocity_error(w_curr, w_des)
+        #get e_R
+        e_R = 1.0/2 * vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
-        return e_x, e_v, e_r, e_w 
-    
-    def get_force(self, e_x, e_v, g, a_des, R):
+        #get e_w and pre requisites
+        w = curr_state[9:12]
+        #calculate wd
+        #still not clear
+        #need to calculate  Rd_dot somehow 
+        Rd_dot = 0 # how to calculate this???
+        wd = self.vee_map(np.dot( Rd.T,Rd_dot))
+
+        e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
+
+        #calculate f
         a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* ac_des) 
         b = np.dot(R, np.array([0,0,1]))
-        return np.dot(a,b)
+        F = np.dot(a,b)
 
-    def get_M(self, e_r, e_w, w, J, R, Rd, wd, wddot):
-        first = -1* self.k_r* e_r - k_w * e_w
+        #calculate M
+        w = curr_state[9:12]
+        first = -1* self.k_r* e_R - k_w * e_w
         second = np.cross(w, np.dot(I, w))  
         a = np.dot(vee_map(w),R.transpose())
         b = np.dot(Rd,wd)
         c = np.dot(np.dot(R.transpose(),Rd),wddot)
         third = -1 * np.dot(J, self.vee_map(np.dot(a,b) - c))
         
-        return first + second + third
-    
-    def get_goal_state(self):
-        #yet to implement
-        return np.array([0,0,0,0,0,0,0,0,0])
-    
+        M = first + second + third
+ 
+        return F,M
+
     def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
         return np.array([ mat[2][1], mat[0][2], mat[1][0]])
-
 
     #https://www.wikiwand.com/en/Skew-symmetric_matrix
     def hat_map(self, mat): #returns the 3x3 skew symmetric matrix of the rotation matrix which is 3x1 
@@ -72,5 +81,10 @@ class Controller:
                          [     mat[2],           0,-1 * mat[0]],
                          [-1 * mat[1],      mat[0],         0 ]])
  
-
+    def rotation_matrix(self, state): #inverse of matrix is its transpose
+        phi, theta, sy = state
+        return np.array([ [cos(sy)*cos(theta), cos(sy)*sin(theta)*sin(phi) - sin(sy)*cos(phi), cos(sy)*sin(theta)*cos(phi) + sin(sy)*sin(phi)],\
+                          [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
+                          [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
+                        ])
 

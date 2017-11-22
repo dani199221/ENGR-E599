@@ -13,16 +13,16 @@ if __name__ == '__main__':
     z = []
     pre = np.array([0,0,0])
     time = [x * 0.1 for x in range(0,100)]
-    xd = []#[0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]
-    vd = []#[0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)]
-    ad = []#[0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
-    b1d = []#[cos(np.pi*t), sin(np.pi)*t, 0]
+    xd = {}#[0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]
+    vd = {}#[0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)]
+    ad = {} #[0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
+    b1d = {} #[cos(np.pi*t), sin(np.pi)*t, 0]
 
     for t in time:
-        xd.append([0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]) 
-        vd.append([0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)])
-        ad.append([0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)])
-        b1d.append([cos(np.pi*t), sin(np.pi)*t, 0])
+        xd[t] = [0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)] 
+        vd[t] = [0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)]
+        ad[t] = [0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
+        b1d[t] = [cos(np.pi*t), sin(np.pi)*t, 0]
 
     print vd 
     print ad
