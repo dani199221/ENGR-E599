@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++0x  -g  -rdynamic CMakeFiles/geo_controller.dir/src/controller.cpp.o  -o ../devel/lib/geo_controller/geo_controller 

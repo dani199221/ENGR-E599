@@ -26,8 +26,8 @@ if __name__ == '__main__':
 
     print vd 
     print ad
-    """
-    for t in range (0, len(itr)):
+    
+    for t in range (0, len(time)):
         F,M = quad.getFM(0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,)
         quad.update(t,0.1,F, M)
         pos = quad.position()
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         print pos-pre
         pre = pos
 
-    plt.plot(itr, v, color='lightblue', linewidth=3)
+    plt.plot(time, v, color='lightblue', linewidth=3)
     #plt.plot(itr, z, color='lightblue', linewidth=3)
     plt.show()
-    """
+    

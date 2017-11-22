@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: geo_controller
+Description: Description of geo_controller
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 
