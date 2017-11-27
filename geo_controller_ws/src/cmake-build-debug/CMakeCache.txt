@@ -17,6 +17,24 @@
 //Build shared libraries (DLLs).
 BUILD_SHARED_LIBS:BOOL=ON
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=Boost_DIR-NOTFOUND
+
+//Path to a file.
+Boost_INCLUDE_DIR:PATH=/usr/include
+
+//Boost library directory DEBUG
+Boost_LIBRARY_DIR_DEBUG:PATH=/usr/lib/x86_64-linux-gnu
+
+//Boost library directory RELEASE
+Boost_LIBRARY_DIR_RELEASE:PATH=/usr/lib/x86_64-linux-gnu
+
+//Boost program_options library (debug)
+Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_program_options.so
+
+//Boost program_options library (release)
+Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_program_options.so
+
 //List of ';' separated packages to exclude
 CATKIN_BLACKLIST_PACKAGES:STRING=
 
@@ -250,11 +268,20 @@ UBUNTU:BOOL=TRUE
 //LSB Distrib - codename tag
 UBUNTU_XENIAL:BOOL=TRUE
 
+//Path to a library.
+USB_LIB:FILEPATH=/usr/lib/x86_64-linux-gnu/libusb-1.0.so
+
 //Path to a file.
 _CATKIN_GTEST_INCLUDE:FILEPATH=/usr/include/gtest/gtest.h
 
 //Path to a file.
 _CATKIN_GTEST_SRC:FILEPATH=/usr/src/gtest/src/gtest.cc
+
+//The directory containing a CMake configuration file for actionlib.
+actionlib_DIR:PATH=/opt/ros/kinetic/share/actionlib/cmake
+
+//The directory containing a CMake configuration file for actionlib_msgs.
+actionlib_msgs_DIR:PATH=/opt/ros/kinetic/share/actionlib_msgs/cmake
 
 //The directory containing a CMake configuration file for catkin.
 catkin_DIR:PATH=/opt/ros/kinetic/share/catkin/cmake
@@ -263,10 +290,79 @@ catkin_DIR:PATH=/opt/ros/kinetic/share/catkin/cmake
 cpp_common_DIR:PATH=/opt/ros/kinetic/share/cpp_common/cmake
 
 //Value Computed by CMake
+crazyflie_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie
+
+//Value Computed by CMake
+crazyflie_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie
+
+//Value Computed by CMake
+crazyflie_controller_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_controller
+
+//Value Computed by CMake
+crazyflie_controller_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_controller
+
+//Value Computed by CMake
+crazyflie_cpp_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_cpp
+
+//The directory containing a CMake configuration file for crazyflie_cpp.
+crazyflie_cpp_DIR:PATH=/home/malintha/geo_controller_ws/src/cmake-build-debug/devel/share/crazyflie_cpp/cmake
+
+//Dependencies for the target
+crazyflie_cpp_LIB_DEPENDS:STATIC=general;/usr/lib/x86_64-linux-gnu/libusb-1.0.so;
+
+//Value Computed by CMake
+crazyflie_cpp_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_cpp
+
+//Value Computed by CMake
+crazyflie_demo_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_demo
+
+//Value Computed by CMake
+crazyflie_demo_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_demo
+
+//Value Computed by CMake
+crazyflie_description_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_description
+
+//Value Computed by CMake
+crazyflie_description_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_description
+
+//Value Computed by CMake
+crazyflie_driver_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_driver
+
+//Value Computed by CMake
+crazyflie_driver_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_driver
+
+//Value Computed by CMake
+crazyflie_tools_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_tools
+
+//Value Computed by CMake
+crazyflie_tools_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/crazyflie_ros/crazyflie_tools
+
+//The directory containing a CMake configuration file for gencpp.
+gencpp_DIR:PATH=/opt/ros/kinetic/share/gencpp/cmake
+
+//The directory containing a CMake configuration file for geneus.
+geneus_DIR:PATH=/opt/ros/kinetic/share/geneus/cmake
+
+//The directory containing a CMake configuration file for genlisp.
+genlisp_DIR:PATH=/opt/ros/kinetic/share/genlisp/cmake
+
+//The directory containing a CMake configuration file for genmsg.
+genmsg_DIR:PATH=/opt/ros/kinetic/share/genmsg/cmake
+
+//The directory containing a CMake configuration file for gennodejs.
+gennodejs_DIR:PATH=/opt/ros/kinetic/share/gennodejs/cmake
+
+//The directory containing a CMake configuration file for genpy.
+genpy_DIR:PATH=/opt/ros/kinetic/share/genpy/cmake
+
+//Value Computed by CMake
 geo_controller_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/geo_controller
 
 //Value Computed by CMake
 geo_controller_SOURCE_DIR:STATIC=/home/malintha/geo_controller_ws/src/geo_controller
+
+//The directory containing a CMake configuration file for geometry_msgs.
+geometry_msgs_DIR:PATH=/opt/ros/kinetic/share/geometry_msgs/cmake
 
 //Value Computed by CMake
 gtest_BINARY_DIR:STATIC=/home/malintha/geo_controller_ws/src/cmake-build-debug/gtest
@@ -294,7 +390,13 @@ gtest_force_shared_crt:BOOL=OFF
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
 
 //Path to a library.
-lib:FILEPATH=/opt/ros/kinetic/lib/libxmlrpcpp.so
+lib:FILEPATH=/opt/ros/kinetic/lib/libtf2.so
+
+//The directory containing a CMake configuration file for message_filters.
+message_filters_DIR:PATH=/opt/ros/kinetic/share/message_filters/cmake
+
+//The directory containing a CMake configuration file for message_generation.
+message_generation_DIR:PATH=/opt/ros/kinetic/share/message_generation/cmake
 
 //The directory containing a CMake configuration file for message_runtime.
 message_runtime_DIR:PATH=/opt/ros/kinetic/share/message_runtime/cmake
@@ -311,6 +413,9 @@ roscpp_serialization_DIR:PATH=/opt/ros/kinetic/share/roscpp_serialization/cmake
 //The directory containing a CMake configuration file for roscpp_traits.
 roscpp_traits_DIR:PATH=/opt/ros/kinetic/share/roscpp_traits/cmake
 
+//The directory containing a CMake configuration file for rosgraph.
+rosgraph_DIR:PATH=/opt/ros/kinetic/share/rosgraph/cmake
+
 //The directory containing a CMake configuration file for rosgraph_msgs.
 rosgraph_msgs_DIR:PATH=/opt/ros/kinetic/share/rosgraph_msgs/cmake
 
@@ -320,8 +425,26 @@ rospy_DIR:PATH=/opt/ros/kinetic/share/rospy/cmake
 //The directory containing a CMake configuration file for rostime.
 rostime_DIR:PATH=/opt/ros/kinetic/share/rostime/cmake
 
+//The directory containing a CMake configuration file for sensor_msgs.
+sensor_msgs_DIR:PATH=/opt/ros/kinetic/share/sensor_msgs/cmake
+
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/kinetic/share/std_msgs/cmake
+
+//The directory containing a CMake configuration file for tf2.
+tf2_DIR:PATH=/opt/ros/kinetic/share/tf2/cmake
+
+//The directory containing a CMake configuration file for tf2_msgs.
+tf2_msgs_DIR:PATH=/opt/ros/kinetic/share/tf2_msgs/cmake
+
+//The directory containing a CMake configuration file for tf2_py.
+tf2_py_DIR:PATH=/opt/ros/kinetic/share/tf2_py/cmake
+
+//The directory containing a CMake configuration file for tf2_ros.
+tf2_ros_DIR:PATH=/opt/ros/kinetic/share/tf2_ros/cmake
+
+//The directory containing a CMake configuration file for tf.
+tf_DIR:PATH=/opt/ros/kinetic/share/tf/cmake
 
 //The directory containing a CMake configuration file for xmlrpcpp.
 xmlrpcpp_DIR:PATH=/opt/ros/kinetic/share/xmlrpcpp/cmake
@@ -331,6 +454,18 @@ xmlrpcpp_DIR:PATH=/opt/ros/kinetic/share/xmlrpcpp/cmake
 # INTERNAL cache entries
 ########################
 
+//ADVANCED property for variable: Boost_DIR
+Boost_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_INCLUDE_DIR
+Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_LIBRARY_DIR_DEBUG
+Boost_LIBRARY_DIR_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_LIBRARY_DIR_RELEASE
+Boost_LIBRARY_DIR_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG
+Boost_PROGRAM_OPTIONS_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE
+Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //catkin environment
 CATKIN_ENV:INTERNAL=/home/malintha/geo_controller_ws/src/cmake-build-debug/catkin_generated/env_cached.sh
 CATKIN_TEST_RESULTS_DIR:INTERNAL=/home/malintha/geo_controller_ws/src/cmake-build-debug/test_results
@@ -436,7 +571,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=10
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -506,4 +641,16 @@ PYTHON_INSTALL_DIR:INTERNAL=lib/python2.7/dist-packages
 ProcessorCount_cmd_getconf-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ProcessorCount_cmd_sysctl
 ProcessorCount_cmd_sysctl-ADVANCED:INTERNAL=1
+//Components requested for this build tree.
+_Boost_COMPONENTS_SEARCHED:INTERNAL=program_options
+//Last used Boost_INCLUDE_DIR value.
+_Boost_INCLUDE_DIR_LAST:INTERNAL=/usr/include
+//Last used Boost_LIBRARY_DIR_DEBUG value.
+_Boost_LIBRARY_DIR_DEBUG_LAST:INTERNAL=/usr/lib/x86_64-linux-gnu
+//Last used Boost_LIBRARY_DIR_RELEASE value.
+_Boost_LIBRARY_DIR_RELEASE_LAST:INTERNAL=/usr/lib/x86_64-linux-gnu
+//Last used Boost_NAMESPACE value.
+_Boost_NAMESPACE_LAST:INTERNAL=boost
+//Last used Boost_USE_MULTITHREADED value.
+_Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
 

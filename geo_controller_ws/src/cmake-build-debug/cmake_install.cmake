@@ -117,7 +117,14 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/malintha/geo_controller_ws/src/cmake-build-debug/gtest/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_controller/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_cpp/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_description/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_tools/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_demo/cmake_install.cmake")
   include("/home/malintha/geo_controller_ws/src/cmake-build-debug/geo_controller/cmake_install.cmake")
+  include("/home/malintha/geo_controller_ws/src/cmake-build-debug/crazyflie_ros/crazyflie_driver/cmake_install.cmake")
 
 endif()
 

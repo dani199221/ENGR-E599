@@ -5,6 +5,6 @@
 	<node name="controller" pkg="geo_controller" type="geo_controller" output="screen">
 		<param name="frame" value="$(arg frame)" />
 	    <param name="worldFrame" value="$(arg worldFrame)" />
-<!-- 	    <rosparam command="load" file="$(find geo_controller)/config/crazyflie2.yaml" /> -->
+ 	    <rosparam command="load" file="$(find geo_controller)/config/crazyflie2-geo-config.yaml"/>
 	</node>
 </launch>
