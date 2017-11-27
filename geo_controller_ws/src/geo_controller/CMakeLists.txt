@@ -199,6 +199,7 @@ include_directories(
 # catkin_add_nosetests(test)
 #catkin_package()
 add_executable(geo_controller
-        src/controller.cpp)
+        src/controller.cpp
+        src/controllerImpl.h)
 target_link_libraries(geo_controller
         ${catkin_LIBRARIES})
