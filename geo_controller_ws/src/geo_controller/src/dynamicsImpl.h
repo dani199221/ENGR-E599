@@ -45,15 +45,6 @@ public:
         this->dt = dt;
     }
 
-    Vector3d getOmega() {
-        return Omega;
-    }
-
-
-    Vector3d get_x_ddot() {
-        return x_ddot;
-    }
-
     Vector3d* get_x_v_Omega() {
         tf::StampedTransform transform;
         transformListener.lookupTransform(worldFrame, bodyFrame, ros::Time(0), transform);
@@ -61,16 +52,19 @@ public:
         x << transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z();
         x_dot = (x - prev_x)/dt;
 
-
         x_arr[0] = x;
         x_arr[1] = x_dot;
-        x_arr[2] = Omega;
+        x_arr[2] = x_ddot;
+        x_arr[3] = Omega;
 
         prev_x = x;
         prev_x_dot = x_dot;
         return x_arr;
     }
 
+    void calculateR() {
+
+    }
 
 
 private:
@@ -92,7 +86,7 @@ private:
     Vector3d prev_x;
     Vector3d prev_x_dot;
 
-    Vector3d x_arr[3];
+    Vector3d x_arr[5];
 
 };
 

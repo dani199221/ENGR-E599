@@ -103,7 +103,7 @@ public:
                 Vector3d* x_arr = dynamics->get_x_v_Omega();
                 Vector3d x = x_arr[0];
                 Vector3d x_dot = x_arr[1];
-                Vector3d Omega = x_arr[2];
+                Vector3d Omega = x_arr[3];
 
                 ROS_INFO("###tf dx dy dz: %f,%f,%f, dt: %f", Omega[0], Omega[1], Omega[2], dt);
                 ROS_INFO("\n");

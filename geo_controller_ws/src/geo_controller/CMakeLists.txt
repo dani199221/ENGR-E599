@@ -202,6 +202,7 @@ include_directories(
 add_executable(geo_controller
         src/GeoController.cpp
         src/controllerImpl.h
-        src/dynamicsImpl.h)
+        src/dynamicsImpl.h
+        src/geoControlllerUtils.h)
 target_link_libraries(geo_controller
         ${catkin_LIBRARIES})
