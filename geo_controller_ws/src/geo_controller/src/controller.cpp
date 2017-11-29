@@ -46,6 +46,11 @@ public:
             case TakingOff:
             {
                 tf::StampedTransform transform;
+                ROS_INFO("In taking off\n");
+                geometry_msgs::Twist msg;
+                msg.angular.z = 40000;
+                m_pubNav.publish(msg);
+
                 m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
                 if (transform.getOrigin().z() > m_startZ + 0.05 || m_thrust > 50000)
                 {
@@ -78,32 +83,21 @@ public:
             {
                 // get the current position of the drone
                 tf::StampedTransform transform;
-                m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
+//                m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
 
-                geometry_msgs::PoseStamped targetWorld;
-                targetWorld.header.stamp = transform.stamp_;
-                targetWorld.header.frame_id = m_worldFrame;
-                targetWorld.pose = m_goal.pose;
+                // get x, v, r, Omega from the dynamicsImpl
+                // controllerImpl.set(x, v, R, Omega)
+                // controllerImpl.getForceVec(t)
+                // controllerImpl.getMomentVec(t)
 
-                geometry_msgs::PoseStamped targetDrone;
-                m_listener.transformPose(m_bodyFrame, targetWorld, targetDrone);
 
-                tfScalar roll, pitch, yaw;
-                tf::Matrix3x3(
-                        tf::Quaternion(
-                                targetDrone.pose.orientation.x,
-                                targetDrone.pose.orientation.y,
-                                targetDrone.pose.orientation.z,
-                                targetDrone.pose.orientation.w
-                        )).getRPY(roll, pitch, yaw);
-
-                geometry_msgs::Twist msg;
-                msg.linear.x = m_pidX.update(0, targetDrone.pose.position.x);
-                msg.linear.y = m_pidY.update(0.0, targetDrone.pose.position.y);
-                msg.linear.z = m_pidZ.update(0.0, targetDrone.pose.position.z);
-
-                msg.angular.z = m_pidYaw.update(0.0, yaw);
-                m_pubNav.publish(msg);
+//                geometry_msgs::Twist msg;
+//                msg.linear.x = m_pidX.update(0, targetDrone.pose.position.x);
+//                msg.linear.y = m_pidY.update(0.0, targetDrone.pose.position.y);
+//                msg.linear.z = m_pidZ.update(0.0, targetDrone.pose.position.z);
+//
+//                msg.angular.z = 20000;
+//                m_pubNav.publish(msg);
 
 
             }
@@ -133,6 +127,7 @@ private:
     bool takeoff(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res) {
         ROS_INFO("Takeoff requested!");
         tf::StampedTransform transform;
+        m_state = TakingOff;
         m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
         m_startZ = transform.getOrigin().z();
         return true;
