@@ -21,9 +21,9 @@
             <param name="use_crazyflie_controller" value="True" />
         </node>
 
-        <include file="$(find geo_controller)/launch/geo_controller.launch">
-            <arg name="frame" value="$(arg frame)" />
-        </include>
+        <!--<include file="$(find geo_controller)/launch/geo_controller.launch">-->
+            <!--<arg name="frame" value="$(arg frame)" />-->
+        <!--</include>-->
 
         <!--<node name="pose" pkg="crazyflie_demo" type="publish_pose.py" output="screen">-->
         <!--<param name="name" value="goal" />-->
