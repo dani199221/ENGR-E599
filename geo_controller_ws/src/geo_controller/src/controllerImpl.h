@@ -11,15 +11,18 @@
 
 #include <eigen3/Eigen/Dense>
 #include "ros/ros.h"
+#include "geoControlllerUtils.h"
 
 using namespace Eigen;
 
-double get(
-        const ros::NodeHandle& n, const std::string& name) {
-        double value;
-        n.getParam(name, value);
-        return value;
-}
+
+//double get(const ros::NodeHandle &n, const std::string &name) {
+//    const std::string node_prefix = "/crazyflie/geocontroller/";
+//    std::string key = node_prefix+name;
+//    double value;
+//    n.getParam(key, value);
+//    return value;
+//}
 
 class ControllerImpl {
 
@@ -31,40 +34,30 @@ public:
                     0,0,0;
         prev_Omega_d << 0,0,0;
 
+        geoControllerUtils utils;
+
         e1[0] = e2[1] = e3[2] = 1;
         e1[1] = e1[2] = e2[0] = e2[2] = e3[0]= e3[1] = 1;
 
-
-
         // set values from the yaml file
-        J[0] = get(n, "uav/J/J1");
-        J[1] = get(n, "uav/J/J2");
-        J[2] = get(n, "uav/J/J3");
-        m = get(n, "uav/m");
-        d = get(n, "uav/d");
-        ctf = get(n, "uav/ctf");
-        kx = get(n, "controller/kx");
-        kv = get(n, "controller/kv");
-        kr = get(n, "controller/kr");
-        kOmega = get(n, "controller/kOmega");
-        x0 << get(n, "trajectory/x0/x01"), get(n, "trajectory/x0/x02"), get(n, "trajectory/x0/x03");
-        v0 << get(n, "trajectory/v0/v01"), get(n, "trajectory/v0/v02"), get(n, "trajectory/v0/v03");
-        R0 <<   get(n, "R0/R0_r1/r1_1"), get(n, "R0/R0_r1/r1_2"), get(n, "R0/R0_r1/r1_3"),
-                get(n, "R0/R0_r2/r2_1"), get(n, "R0/R0_r2/r2_2"), get(n, "R0/R0_r2/r2_3"),
-                get(n, "R0/R0_r3/r3_1"), get(n, "R0/R0_r3/r3_2"), get(n, "R0/R0_r3/r3_3");
-        Omega0 << get(n, "Omega0/Omega01"), get(n, "Omega0/Omega02"), get(n, "Omega0/Omega03");
+        J[0] = utils.get(n, "uav/J/J1");
+        J[1] = utils.get(n, "uav/J/J2");
+        J[2] = utils.get(n, "uav/J/J3");
+        m = utils.get(n, "uav/m");
+        d = utils.get(n, "uav/d");
+        ctf = utils.get(n, "uav/ctf");
+        kx = utils.get(n, "controller/kx");
+        kv = utils.get(n, "controller/kv");
+        kr = utils.get(n, "controller/kr");
+        kOmega = utils.get(n, "controller/kOmega");
 
+        x0 = utils.getX0();
+        v0 = utils.getV0();
+        R0 = utils.getR0();
+        Omega0 = utils.getOmega0();
 
     }
 
-    /**
-     * to set values from the quadrotor dynamics component
-     * @param x
-     * @param v
-     * @param R
-     * @param Omega
-     * @param Omega_dot
-     */
     void setDynamicsValues(Vector3d x, Vector3d v, Matrix3d R, Vector3d Omega) {
         if(isFirst) {
             this->x = x0;
@@ -98,7 +91,7 @@ public:
     }
 
     Vector3d getMomentVector() {
-        Matrix3d Omega_hat = getSkewSymmetricMap(Omega);
+        Matrix3d Omega_hat = utils.getSkewSymmetricMap(Omega);
         M = -kr*eR - kOmega*eOmega + Omega.cross(J.cwiseProduct(Omega)) -
                 J.cwiseProduct((Omega_hat*Eigen::Transpose(R)*R_d)*Omega_d -
                                        (Eigen::Transpose(R)*R_d)*Omega_dot_d);
@@ -109,7 +102,7 @@ public:
         ex = x-x_d;
         ev = v - xdot_d;
         Matrix3d eR_temp = 0.5*(Eigen::Transpose(R_d)*R - Eigen::Transpose(R)*R_d);
-        Vector3d eR = getVeeMap(eR_temp);
+        Vector3d eR = utils.getVeeMap(eR_temp);
         eOmega = Omega - Eigen::Transpose(R)*R_d*Omega_d;
     }
 
@@ -117,22 +110,16 @@ public:
     void calculate_Rd() {
         Vector3d b3_d_nume = -kx*ex - kv*ev - m*g*e3 + m*xddot_d;
         b3_d = b3_d_nume/b3_d_nume.norm();
-
         b1_d << cos(M_PI*t), sin(M_PI*t), 0;
-
         Vector3d b2_d_nume = b3_d.cross(b1_d);
         b2_d = b2_d_nume/b2_d_nume.norm();
-
         R_d << b2_d.cross(b3_d), b2_d, b3_d;
-
         R_dot_d = (R_d - prev_R_d)/dt;
 
     }
 
-
     void calculate_Omega_desired() {
-        Omega_d = getVeeMap(R_dot_d*Eigen::Inverse(prev_R_d));
-
+        Omega_d = utils.getVeeMap(R_dot_d*Eigen::Inverse(prev_R_d));
         Omega_dot_d = (Omega_d - prev_Omega_d)/dt;
         prev_Omega_d = Omega_d;
     }
@@ -151,21 +138,6 @@ public:
         xddot_d[2] = -0.6*cos(M_PI*t);
     }
 
-    Vector3d getVeeMap(Matrix3d mat) {
-        Vector3d vee_vec;
-        vee_vec[0] = mat(2,1);
-        vee_vec[1] = mat(0,2);
-        vee_vec[2] = mat(1,0);
-        return vee_vec;
-    }
-
-    Matrix3d getSkewSymmetricMap(Vector3d vec) {
-        Matrix3d hat_map(3,3);
-        hat_map <<  0, -vec(3), vec(2),
-                    vec(3), 0, -vec(1),
-                    -vec(2), vec(1), 0;
-        return hat_map;
-    }
 
 private:
     ros::NodeHandle n;
@@ -227,8 +199,6 @@ private:
     Matrix3d prev_R_d;
     Vector3d prev_Omega_d;
     bool isFirst = true;
-
-
-
+    geoControllerUtils utils;
 
 };

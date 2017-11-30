@@ -24,7 +24,7 @@ public:
         m_pubNav = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
         m_serviceTakeoff = nh.advertiseService("takeoff", &GeoController::takeoff, this);
         m_serviceLand = nh.advertiseService("land", &GeoController::land, this);
-        dynamics = new dynamicsImpl(nh, m_worldFrame, m_bodyFrame);
+        dynamics = new dynamicsImpl(n, m_worldFrame, m_bodyFrame);
     };
 
 
@@ -104,9 +104,10 @@ public:
                 Vector3d x = x_arr[0];
                 Vector3d x_dot = x_arr[1];
                 Vector3d Omega = x_arr[3];
-
-                ROS_INFO("###tf dx dy dz: %f,%f,%f, dt: %f", Omega[0], Omega[1], Omega[2], dt);
-                ROS_INFO("\n");
+                Matrix3d R = dynamics->getR();
+//                ROS_INFO("###tf dx dy dz: %f,%f,%f, dt: %f", Omega[0], Omega[1], Omega[2], dt);
+                std::cout<<"R: "<<R<<std::endl;
+//                ROS_INFO("\n");
 
                 geometry_msgs::Twist msg;
                 m_pubNav.publish(msg);
