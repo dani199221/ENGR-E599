@@ -46,16 +46,12 @@ public:
         //angular_velocity.y => forward (pitch), x => roll
     }
 
-    /**
-     * set dt before executing any other function
-     * @param dt
-     */
+
     void setdt(float dt) {
         this->dt = dt;
     }
 
     Vector3d* get_x_v_Omega() {
-//        if(IMUreceive) {
             tf::StampedTransform transform;
             transformListener.lookupTransform(worldFrame, bodyFrame, ros::Time(0), transform);
             x << transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z();
@@ -66,10 +62,6 @@ public:
             x_arr[3] = Omega;
             prev_x = x;
             prev_x_dot = x_dot;
-//        }
-//        else {
-//
-//        }
 
         return x_arr;
     }

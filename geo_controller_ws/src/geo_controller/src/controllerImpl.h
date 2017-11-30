@@ -15,15 +15,6 @@
 
 using namespace Eigen;
 
-
-//double get(const ros::NodeHandle &n, const std::string &name) {
-//    const std::string node_prefix = "/crazyflie/geocontroller/";
-//    std::string key = node_prefix+name;
-//    double value;
-//    n.getParam(key, value);
-//    return value;
-//}
-
 class ControllerImpl {
 
 public:

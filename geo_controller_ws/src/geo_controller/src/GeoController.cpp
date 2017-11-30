@@ -79,19 +79,24 @@ public:
                 tf::StampedTransform transform;
                 m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
 
-                // get x, v, r, Omega from the dynamicsImpl
+                // get x, v, r, Omega from the dynamicsImpl - done
+                dynamics->setdt(dt);
+                Vector3d* x_arr = dynamics->get_x_v_Omega();
+                Vector3d x = x_arr[0];
+                Vector3d x_dot = x_arr[1];
+                Vector3d Omega = x_arr[3];
+                Matrix3d R = dynamics->getR();
+
                 // controllerImpl.set(x, v, R, Omega)
                 // controllerImpl.getForceVec(t)
                 // controllerImpl.getMomentVec(t)
 
 
-                geometry_msgs::Twist msg;
+//                geometry_msgs::Twist msg;
 //                msg.linear.x = m_pidX.update(0, targetDrone.pose.position.x);
 //                msg.linear.y = m_pidY.update(0.0, targetDrone.pose.position.y);
 //                msg.linear.z = m_pidZ.update(0.0, targetDrone.pose.position.z);
 
-                msg.angular.z = 20000;
-                m_pubNav.publish(msg);
 
 
             }

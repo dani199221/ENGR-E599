@@ -18,14 +18,7 @@ using namespace Eigen;
 
 class geoControllerUtils {
 public:
-    geoControllerUtils() {
-//        x0 << get(n, "trajectory/x0/x01"), get(n, "trajectory/x0/x02"), get(n, "trajectory/x0/x03");
-//        v0 << get(n, "trajectory/v0/v01"), get(n, "trajectory/v0/v02"), get(n, "trajectory/v0/v03");
-//        R0 << get(n, "trajectory/R0/R0_r1/r1_1"), get(n, "trajectory/R0/R0_r1/r1_2"), get(n, "trajectory/R0/R0_r1/r1_3"),
-//                get(n, "trajectory/R0/R0_r2/r2_1"), get(n, "trajectory/R0/R0_r2/r2_2"), get(n, "trajectory/R0/R0_r2/r2_3"),
-//                get(n, "trajectory/R0/R0_r3/r3_1"), get(n, "trajectory/R0/R0_r3/r3_2"), get(n, "trajectory/R0/R0_r3/r3_3");
-//        Omega0 << get(n, "trajectory/Omega0/Omega01"), get(n, "trajectory/Omega0/Omega02"), get(n, "trajectory/Omega0/Omega03");
-    }
+    geoControllerUtils() {}
 
     double get(const ros::NodeHandle &n, const std::string &name) {
         const std::string node_prefix = "/crazyflie/geocontroller/";
