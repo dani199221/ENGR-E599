@@ -24,8 +24,9 @@ if __name__ == '__main__':
         ad[t] = [0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
         b1d[t] = [cos(np.pi*t), sin(np.pi)*t, 0]
 
-    print xd 
-    """ 
+    print vd 
+    print ad
+    
     for t in range (0, len(time)):
         F,M = quad.getFM(0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,)
         quad.update(t,0.1,F, M)
@@ -39,4 +40,4 @@ if __name__ == '__main__':
     plt.plot(time, v, color='lightblue', linewidth=3)
     #plt.plot(itr, z, color='lightblue', linewidth=3)
     plt.show()
-    """
+    
