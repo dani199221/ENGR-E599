@@ -4,7 +4,6 @@
 
 #ifndef PROJECT_TRACKING_CONTROL_H
 #define PROJECT_TRACKING_CONTROL_H
-
 #endif
 
 #pragma once
@@ -18,17 +17,17 @@ using namespace Eigen;
 class ControllerImpl {
 
 public:
-    ControllerImpl(const ros::NodeHandle &nodeHandle): n(nodeHandle) {
+    ControllerImpl(const ros::NodeHandle &nodeHandle) : n(nodeHandle) {
 
-        prev_R_d << 0,0,0,
-                    0,0,0,
-                    0,0,0;
-        prev_Omega_d << 0,0,0;
+        prev_R_d << 0, 0, 0,
+                0, 0, 0,
+                0, 0, 0;
+        prev_Omega_d << 0, 0, 0;
 
         geoControllerUtils utils;
 
         e1[0] = e2[1] = e3[2] = 1;
-        e1[1] = e1[2] = e2[0] = e2[2] = e3[0]= e3[1] = 1;
+        e1[1] = e1[2] = e2[0] = e2[2] = e3[0] = e3[1] = 1;
 
         // set values from the yaml file
         J[0] = utils.get(n, "uav/J/J1");
@@ -46,11 +45,11 @@ public:
         v0 = utils.getV0();
         R0 = utils.getR0();
         Omega0 = utils.getOmega0();
-        
+
     }
 
     void setDynamicsValues(Vector3d x, Vector3d v, Matrix3d R, Vector3d Omega) {
-        if(isFirst) {
+        if (isFirst) {
             this->x = x0;
             this->v = v0;
             this->R = R0;
@@ -67,7 +66,7 @@ public:
      * @param e
      * @return
      */
-    Vector3d getForceVector(const ros::TimerEvent& e) {
+    Vector3d getForceVector(const ros::TimerEvent &e) {
         this->t = e.current_real.sec;
         this->dt = t - e.last_real.sec;
 
@@ -75,58 +74,58 @@ public:
         calculate_Rd();
         calculate_Omega_desired();
         calculateErrors();
-        Vector3d f_temp = -(-kx*ex - kv*ev - m*g*e3 + m*xddot_d);
-        Vector3d Re3 = R*e3;
+        Vector3d f_temp = -(-kx * ex - kv * ev - m * g * e3 + m * xddot_d);
+        Vector3d Re3 = R * e3;
         f = f_temp.cwiseProduct(Re3);
         return f;
     }
 
     Vector3d getMomentVector() {
         Matrix3d Omega_hat = utils.getSkewSymmetricMap(Omega);
-        M = -kr*eR - kOmega*eOmega + Omega.cross(J.cwiseProduct(Omega)) -
-                J.cwiseProduct((Omega_hat*Eigen::Transpose<Matrix3d>(R)*R_d)*Omega_d -
-                                       (Eigen::Transpose<Matrix3d>(R)*R_d)*Omega_dot_d);
+        M = -kr * eR - kOmega * eOmega + Omega.cross(J.cwiseProduct(Omega)) -
+            J.cwiseProduct((Omega_hat * Eigen::Transpose<Matrix3d>(R) * R_d) * Omega_d -
+                           (Eigen::Transpose<Matrix3d>(R) * R_d) * Omega_dot_d);
         return M;
     }
 
     void calculateErrors() {
-        ex = x-x_d;
+        ex = x - x_d;
         ev = v - xdot_d;
-        Matrix3d eR_temp = 0.5*(Eigen::Transpose<Matrix3d>(R_d)*R - Eigen::Transpose<Matrix3d>(R)*R_d);
+        Matrix3d eR_temp = 0.5 * (Eigen::Transpose<Matrix3d>(R_d) * R - Eigen::Transpose<Matrix3d>(R) * R_d);
         Vector3d eR = utils.getVeeMap(eR_temp);
-        eOmega = Omega - Eigen::Transpose<Matrix3d>(R)*R_d*Omega_d;
+        eOmega = Omega - Eigen::Transpose<Matrix3d>(R) * R_d * Omega_d;
     }
 
 
     void calculate_Rd() {
-        Vector3d b3_d_nume = -kx*ex - kv*ev - m*g*e3 + m*xddot_d;
-        b3_d = b3_d_nume/b3_d_nume.norm();
-        b1_d << cos(M_PI*t), sin(M_PI*t), 0;
+        Vector3d b3_d_nume = -kx * ex - kv * ev - m * g * e3 + m * xddot_d;
+        b3_d = b3_d_nume / b3_d_nume.norm();
+        b1_d << cos(M_PI * t), sin(M_PI * t), 0;
         Vector3d b2_d_nume = b3_d.cross(b1_d);
-        b2_d = b2_d_nume/b2_d_nume.norm();
+        b2_d = b2_d_nume / b2_d_nume.norm();
         R_d << b2_d.cross(b3_d), b2_d, b3_d;
-        R_dot_d = (R_d - prev_R_d)/dt;
+        R_dot_d = (R_d - prev_R_d) / dt;
 
     }
 
     void calculate_Omega_desired() {
-        Omega_d = utils.getVeeMap(R_dot_d*Eigen::Inverse<Matrix3d>(prev_R_d));
-        Omega_dot_d = (Omega_d - prev_Omega_d)/dt;
+        Omega_d = utils.getVeeMap(R_dot_d * Eigen::Inverse<Matrix3d>(prev_R_d));
+        Omega_dot_d = (Omega_d - prev_Omega_d) / dt;
         prev_Omega_d = Omega_d;
     }
 
     void calculate_x_desired() {
-        x_d[0] = 0.4*t;
-        x_d[1] = 0.4*sin(M_PI*t);
-        x_d[2] = 0.6*cos(M_PI*t);
+        x_d[0] = 0.4 * t;
+        x_d[1] = 0.4 * sin(M_PI * t);
+        x_d[2] = 0.6 * cos(M_PI * t);
 
         xdot_d[0] = 0.4;
-        xdot_d[1] = 0.4*cos(M_PI*t);
-        xdot_d[2] = -0.6*sin(M_PI*t);
+        xdot_d[1] = 0.4 * cos(M_PI * t);
+        xdot_d[2] = -0.6 * sin(M_PI * t);
 
         xddot_d[0] = 0;
-        xddot_d[1] = -0.4*sin(M_PI*t);
-        xddot_d[2] = -0.6*cos(M_PI*t);
+        xddot_d[1] = -0.4 * sin(M_PI * t);
+        xddot_d[2] = -0.6 * cos(M_PI * t);
     }
 
 

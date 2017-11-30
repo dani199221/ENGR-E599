@@ -22,10 +22,10 @@ public:
     float temp_acc;
 
     dynamicsImpl(const ros::NodeHandle &n, std::string worldFrame, std::string bodyFrame) :
-                                                                                      worldFrame(worldFrame),
-                                                                                      bodyFrame(bodyFrame) {
+            worldFrame(worldFrame),
+            bodyFrame(bodyFrame) {
         n.getParam("/cf/crazyflie_add/tf_prefix", tf_prefix);
-        ROS_INFO("### Initialized dynamicsImpl worldFrame:%s bodyFrame%s\n",worldFrame.data(), bodyFrame.data());
+        ROS_INFO("### Initialized dynamicsImpl worldFrame:%s bodyFrame%s\n", worldFrame.data(), bodyFrame.data());
         transformListener.waitForTransform(worldFrame, bodyFrame, ros::Time(0), ros::Duration(10.0));
 
         ros::NodeHandle nh;
@@ -51,25 +51,26 @@ public:
         this->dt = dt;
     }
 
-    Vector3d* get_x_v_Omega() {
-            tf::StampedTransform transform;
-            transformListener.lookupTransform(worldFrame, bodyFrame, ros::Time(0), transform);
-            x << transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z();
-            x_dot = (x - prev_x)/dt;
-            x_arr[0] = x;
-            x_arr[1] = x_dot;
-            x_arr[2] = x_ddot;
-            x_arr[3] = Omega;
-            prev_x = x;
-            prev_x_dot = x_dot;
+    Vector3d *get_x_v_Omega() {
+        tf::StampedTransform transform;
+        transformListener.lookupTransform(worldFrame, bodyFrame, ros::Time(0), transform);
+        x << transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z();
+        x_dot = (x - prev_x) / dt;
+        x_arr[0] = x;
+        x_arr[1] = x_dot;
+        x_arr[2] = x_ddot;
+        x_arr[3] = Omega;
+        prev_x = x;
+        prev_x_dot = x_dot;
 
         return x_arr;
     }
 
     Matrix3d getR() {
-        Omega_dot = (Omega - prev_Omega)/dt;
+        Omega_dot = (Omega - prev_Omega) / dt;
         Matrix3d Omega_hat = utils->getSkewSymmetricMap(Omega);
-        R = prev_R + dt*utils->getSkewSymmetricMap(Omega) + 0.5*std::pow(dt,2)*utils->getSkewSymmetricMap(Omega_dot);
+        R = prev_R + dt * utils->getSkewSymmetricMap(Omega) +
+            0.5 * std::pow(dt, 2) * utils->getSkewSymmetricMap(Omega_dot);
         return R;
     }
 
@@ -101,7 +102,7 @@ private:
     Vector3d prev_x_dot;
 
     Vector3d x_arr[5];
-    geoControllerUtils* utils;
+    geoControllerUtils *utils;
     bool IMUreceive = false;
 
 };

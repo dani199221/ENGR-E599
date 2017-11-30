@@ -4,7 +4,6 @@
 
 #ifndef PROJECT_GEOCONTROLLLERUTILS_H
 #define PROJECT_GEOCONTROLLLERUTILS_H
-
 #endif
 
 #pragma once
@@ -67,9 +66,7 @@ public:
     Vector3d getV0() {
         return v0;
     }
-
-
-
+    
 private:
     Vector3d x0;
     Vector3d v0;
