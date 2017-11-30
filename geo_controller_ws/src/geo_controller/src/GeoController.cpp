@@ -5,6 +5,7 @@
 #include <tf/transform_listener.h>
 #include <std_srvs/Empty.h>
 #include "dynamicsImpl.h"
+#include "controllerImpl.h"
 
 enum State {
     Idle = 0,
@@ -17,7 +18,7 @@ class GeoController {
 
 public:
     GeoController(const std::string &worldFrame, const std::string &frame,
-                  const ros::NodeHandle &n) : m_serviceTakeoff(), m_serviceLand(), m_state(Idle), m_thrust(0),
+                  const ros::NodeHandle &n) : m_serviceTakeoff(), m_serviceLand(), m_state(Automatic), m_thrust(0),
                                               m_startZ(0.0), m_worldFrame(worldFrame), m_bodyFrame(frame) {
         ros::NodeHandle nh;
         m_listener.waitForTransform(m_worldFrame, m_bodyFrame, ros::Time(0), ros::Duration(10.0));
@@ -25,6 +26,7 @@ public:
         m_serviceTakeoff = nh.advertiseService("takeoff", &GeoController::takeoff, this);
         m_serviceLand = nh.advertiseService("land", &GeoController::land, this);
         dynamics = new dynamicsImpl(n, m_worldFrame, m_bodyFrame);
+        controllerImpl  = new ControllerImpl(n);
     };
 
 
@@ -34,7 +36,6 @@ public:
         ros::spin();
     }
 
-
     void iteration(const ros::TimerEvent &e) {
         float dt = e.current_real.toSec() - e.last_real.toSec();
 
@@ -43,24 +44,23 @@ public:
                 tf::StampedTransform transform;
                 ROS_INFO("In taking off\n");
                 geometry_msgs::Twist msg;
-                msg.linear.x = 20000; //forward (pitch)
-                msg.linear.z = 20000; //sideways (roll)
+//                msg.linear.x = 20000; //forward (pitch)
+//                msg.linear.z = 20000; //sideways (roll)
                 m_pubNav.publish(msg);
 
-//                m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
-//                if (transform.getOrigin().z() > m_startZ + 0.05 || m_thrust > 50000)
-//                {
-//                    m_state = Automatic;
-//                    m_thrust = 0;
-//                }
-//                else
-//                {
-//                    m_thrust += 10000 * dt;
-//                    geometry_msgs::Twist msg;
-//                    msg.linear.z = m_thrust;
-//                    m_pubNav.publish(msg);
-//                }
-
+                m_listener.lookupTransform(m_worldFrame, m_bodyFrame, ros::Time(0), transform);
+                if (transform.getOrigin().z() > m_startZ + 0.05 || m_thrust > 50000)
+                {
+                    m_state = Automatic;
+                    m_thrust = 0;
+                }
+                else
+                {
+                    m_thrust += 10000 * dt;
+                    geometry_msgs::Twist msg;
+                    msg.linear.z = m_thrust;
+                    m_pubNav.publish(msg);
+                }
             }
                 break;
             case Landing: {
@@ -86,12 +86,13 @@ public:
                 Vector3d x_dot = x_arr[1];
                 Vector3d Omega = x_arr[3];
                 Matrix3d R = dynamics->getR();
+                // set values in the controllerImpl
+                controllerImpl->setDynamicsValues(x,x_dot,R,Omega);
+                controllerImpl->getForceVector(e);
+//                controllerImpl->getMomentVec(e);
 
-                // controllerImpl.set(x, v, R, Omega)
-                // controllerImpl.getForceVec(t)
-                // controllerImpl.getMomentVec(t)
 
-
+                // set thrust to the drone
 //                geometry_msgs::Twist msg;
 //                msg.linear.x = m_pidX.update(0, targetDrone.pose.position.x);
 //                msg.linear.y = m_pidY.update(0.0, targetDrone.pose.position.y);
@@ -102,18 +103,7 @@ public:
             }
                 break;
             case Idle: {
-//                ROS_INFO("In idle: Omega:%f \n", dynamics->temp_acc);
-                dynamics->setdt(dt);
-
-                Vector3d* x_arr = dynamics->get_x_v_Omega();
-                Vector3d x = x_arr[0];
-                Vector3d x_dot = x_arr[1];
-                Vector3d Omega = x_arr[3];
-                Matrix3d R = dynamics->getR();
-//                ROS_INFO("###tf dx dy dz: %f,%f,%f, dt: %f", Omega[0], Omega[1], Omega[2], dt);
-                std::cout<<"R: "<<R<<std::endl;
-//                ROS_INFO("\n");
-
+                ROS_INFO("### Drone is in idle state ###");
                 geometry_msgs::Twist msg;
                 m_pubNav.publish(msg);
             }
@@ -133,9 +123,10 @@ private:
     float m_thrust;
     float m_startZ; // only for landing to the start z value
     geometry_msgs::PoseStamped m_goal;
-    dynamicsImpl *dynamics;
+    dynamicsImpl* dynamics;
     float frequency;
     ros::NodeHandle node;
+    ControllerImpl* controllerImpl;
 
     bool takeoff(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res) {
         ROS_INFO("Takeoff requested!");
@@ -166,11 +157,10 @@ int main(int argc, char **argv) {
     double frequency;
     n.param("frequency", frequency, 20.0);
 
-    ROS_INFO("### Initializing geocontroller. worldFrame:%s bodyFrame%s\n",worldFrame.data(), frame.data());
+    ROS_INFO("### Initializing geoController. worldFrame:%s bodyFrame%s\n",worldFrame.data(), frame.data());
 
     GeoController controller(worldFrame, frame, n);
     controller.run(frequency);
-
 
     return 0;
 }

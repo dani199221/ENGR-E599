@@ -18,7 +18,7 @@ using namespace Eigen;
 class ControllerImpl {
 
 public:
-    ControllerImpl(ros::NodeHandle &nodeHandle): n(nodeHandle) {
+    ControllerImpl(const ros::NodeHandle &nodeHandle): n(nodeHandle) {
 
         prev_R_d << 0,0,0,
                     0,0,0,
@@ -46,7 +46,7 @@ public:
         v0 = utils.getV0();
         R0 = utils.getR0();
         Omega0 = utils.getOmega0();
-
+        
     }
 
     void setDynamicsValues(Vector3d x, Vector3d v, Matrix3d R, Vector3d Omega) {
@@ -84,17 +84,17 @@ public:
     Vector3d getMomentVector() {
         Matrix3d Omega_hat = utils.getSkewSymmetricMap(Omega);
         M = -kr*eR - kOmega*eOmega + Omega.cross(J.cwiseProduct(Omega)) -
-                J.cwiseProduct((Omega_hat*Eigen::Transpose(R)*R_d)*Omega_d -
-                                       (Eigen::Transpose(R)*R_d)*Omega_dot_d);
+                J.cwiseProduct((Omega_hat*Eigen::Transpose<Matrix3d>(R)*R_d)*Omega_d -
+                                       (Eigen::Transpose<Matrix3d>(R)*R_d)*Omega_dot_d);
         return M;
     }
 
     void calculateErrors() {
         ex = x-x_d;
         ev = v - xdot_d;
-        Matrix3d eR_temp = 0.5*(Eigen::Transpose(R_d)*R - Eigen::Transpose(R)*R_d);
+        Matrix3d eR_temp = 0.5*(Eigen::Transpose<Matrix3d>(R_d)*R - Eigen::Transpose<Matrix3d>(R)*R_d);
         Vector3d eR = utils.getVeeMap(eR_temp);
-        eOmega = Omega - Eigen::Transpose(R)*R_d*Omega_d;
+        eOmega = Omega - Eigen::Transpose<Matrix3d>(R)*R_d*Omega_d;
     }
 
 
@@ -110,7 +110,7 @@ public:
     }
 
     void calculate_Omega_desired() {
-        Omega_d = utils.getVeeMap(R_dot_d*Eigen::Inverse(prev_R_d));
+        Omega_d = utils.getVeeMap(R_dot_d*Eigen::Inverse<Matrix3d>(prev_R_d));
         Omega_dot_d = (Omega_d - prev_Omega_d)/dt;
         prev_Omega_d = Omega_d;
     }
