@@ -5,19 +5,16 @@ from math import sin, cos, tan, exp
 
 
 #http://groups.csail.mit.edu/robotics-center/public_papers/Landry15.pdf
-#specifications for crazyflie
-m = 0.027 #kg
+m = 4.34 #kg
 g = 9.81 #m/s2
 
 #The inertia matrix
-J = I = np.array([[2.3951e-5,         0,         0],\
-                  [0,         2.3951e-5,         0],\
-                  [0,                 0, 3.2347e-5]\
+J = I = np.array([[0.0820,         0,         0],\
+                  [0,         0.0845,         0],\
+                  [0,                 0, 0.1377]\
                  ])
-km = 1.8580e-5 #Nms2
-kf = 0.005022  #Ns2
-ctf = km/kf
-d = 0.092/2  #92mm propellor to propellor, d is the distance between center of mass and propellor
+ctf = 8.004e-4 #km/kf
+d = 0.315  
 A = np.array([[  1,   1,    1,   1],\
              [   0,  -d,    0,   d],\
              [   d,   0,   -d,   0],\
@@ -49,7 +46,10 @@ class Quadcopter:
     
     def angular_velocity(self):
         return self.state[9:12]
- 
+    
+    def curr_state(self):
+        return self.state
+
     #get the deriviative of the state based on the given F and M
     def state_dot(self, state, t, F, M):
         x, y, z, xdot, ydot, zdot, p, q, r, pd, qd, rd = state
@@ -96,9 +96,9 @@ class Quadcopter:
     #Rotation matrix R from the body frame to the inertial frame
     def rotation_matrix(self): #inverse of matrix is its transpose
         phi, theta, sy = self.state[6:9]
-        return np.array([ [cos(sy)*cos(theta), cos(sy)*sin(theta)*sin(phi) - sin(sy)*cos(phi), cos(sy)*sin(theta)*cos(phi) + sin(sy)*sin(phi)],\
-                          [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
-                          [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
+        return np.array([ [cos(sy)*cos(theta),cos(sy)*sin(theta)*sin(phi)-sin(sy)*cos(phi),cos(sy)*sin(theta)*cos(phi)+sin(sy)*sin(phi)],\
+                          [sin(sy)*cos(theta),sin(sy)*sin(theta)*sin(phi)+cos(sy)*cos(phi),sin(sy)*sin(theta)*cos(phi)-cos(sy)*sin(phi)],\
+                          [ -1* sin(theta)   ,cos(theta)*sin(phi)                         ,cos(theta)*cos(phi)                         ]\
                         ])
    
 
