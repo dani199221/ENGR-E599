@@ -2,74 +2,114 @@ import numpy as np
 import scipy.integrate as integrate
 import math
 from math import sin, cos, tan, exp
+
 e1 = np.array([1,0,0])
 e2 = np.array([0,1,0])
 e3 = np.array([0,0,1])
+mass = 4.34 #kg
+g = 9.81 #m/s2
 
+#The inertia matrix
+J = I = np.array([[0.0820,         0,         0],\
+                  [0,         0.0845,         0],\
+                  [0,                 0, 0.1377]\
+                 ])
+ctf = 8.004e-4 #km/kf
+d = 0.315  
 class Controller:
-    def __init__(self, mass,t, xd, vd, ad, bd):
-        self.g = 9.81
-        self.mass = mass
-        self.k_x = 0 
-        self.k_v = 0
-        self.k_r = 0
-        self.k_w = 0
-        self.t = t   #array of time
-        self.xd = xd #dict of desired velocity over time
-        self.vd = vd #dict of desired acceleration over time
-        self.ad = ad #dict of desired acceleration over time
-        self.b1d = b1d #dict of desired direction over time
+    def __init__(self):
+        self.k_x = 16 
+        self.k_v = 5.6
+        self.k_r = 8.81 
+        self.k_w = 2.54 
+        self.prev_Rd = np.zeros((3,3))
+        self.prev_wd = np.zeros(3)
+        self.xd = np.zeros(3)
+        self.vd = np.zeros(3)
+        self.ad = np.zeros(3)
 
-    def getFM(self, curr_state, t, dt):
+    #returns the desired position, velocity and acceleration 
+    def get_x_desired(self,t):
+        self.xd = np.array([0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]) 
+        self.vd = np.array([0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)])
+        self.ad = np.array([0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)])
+        return self.xd, self.vd, self.ad
+    
+    #returns the desired b1d, b2d, b3d
+    def get_bd(self,t, e_v, e_x, ad):
+        b1d = np.array([cos(np.pi*t), sin(np.pi*t), 0]) 
         
-        #get e_x e_v
-        e_x = curr_state[0:3] - self.xd[t]
-        e_v = curr_state[3:6] - self.vd[t]
-        
-        #steps to get R and Rdesired
-        
-        ac_des = self.ad[t] #get the desired acceleration
-        
-        res = -1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,self.g]) + self.mass* ac_des
+        #b3d calculation
+        res = -1* self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad 
         b3d = res/np.linalg.norm(res) #get b3d from eq 12
 
+        #b2d calculation
         b2d = np.cross(b3d, b1d)/np.linalg.norm(np.cross(b3d, b1d)) #get b2d from b3d and b1d
+        b2d = b2d/np.linalg.norm(b2d)
+        
+        #b1d calculation
         new_b1d = np.cross(b2d,b3d) #get new b1d from corss product of b2d and b3d
 
-        #ger Rd from new_bq, b2d,b3d
-        Rd =  np.array([[new_b1d[0], b2d[0], b3d[0]], [new_b1d[1], b2d[1], b3d[1]], [new_b1d[2], b2d[2], b3d[2]]]) 
+        return new_b1d, b2d, b3d 
+    
+    #returns the desired Force required
+    def getF(self,e_x, e_v, ad, R):   
 
+        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad) 
+        return np.dot(a,np.dot(R, e3))
+    
+    def getM(self, wd, e_R, e_w, w, Rd,dt,R):
+        wd_dot  = (wd - self.prev_wd)/dt 
+        self.prev_wd = wd
+        first = -1* self.k_r* e_R - self.k_w * e_w
+        second = np.cross(w, np.dot(I, w))  
+        a = np.dot(self.hat_map(w),R.transpose())
+        b = np.dot(Rd,wd)
+        c = np.dot(np.dot(R.transpose(),Rd),wd_dot)
+        third = -1 * np.dot(J, np.dot(a,b) - c)
+        
+        M = first + second + third
+        return M
+    
+
+    #returns the desired F and M to the main function
+    def update(self, curr_state, t, dt):
+        
+        #get desired position, velocity and acceleration
+        xd, vd, ad = self.get_x_desired(t)
+        #get e_x e_v
+        e_x = curr_state[0:3] - xd 
+        e_v = curr_state[3:6] - vd 
+        print xd
+        print curr_state[0:3]
+        print e_x 
+        
+        #get the desired heading directions for the the body frame
+        b1d, b2d, b3d =  self.get_bd(t, e_v, e_x, ad)
+
+
+        #ger Rd from b1d, b2d,b3d
+        Rd =  np.array([[b1d[0], b2d[0], b3d[0]], [b1d[1], b2d[1], b3d[1]], [b1d[2], b2d[2], b3d[2]]]) 
         R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
         #get e_R
-        e_R = 1.0/2 * vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
+        e_R = 1.0/2 * self.vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
         #get e_w and pre requisites
         w = curr_state[9:12]
-        #calculate wd
-        #still not clear
-        #need to calculate  Rd_dot somehow 
-        Rd_dot = 0 # how to calculate this???
-        wd = self.vee_map(np.dot( Rd.T,Rd_dot))
+        Rd_dot = (Rd - self.prev_Rd)/dt
+        self.prev_Rd = Rd
+        wd = self.vee_map(np.dot(np.linalg.inv(Rd),Rd_dot))
 
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
         #calculate f
-        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - self.mass * np.array([0,0,g]) + self.mass* ac_des) 
-        b = np.dot(R, np.array([0,0,1]))
-        F = np.dot(a,b)
-
+        F = self.getF(e_x, e_v, ad, R)
         #calculate M
         w = curr_state[9:12]
-        first = -1* self.k_r* e_R - k_w * e_w
-        second = np.cross(w, np.dot(I, w))  
-        a = np.dot(vee_map(w),R.transpose())
-        b = np.dot(Rd,wd)
-        c = np.dot(np.dot(R.transpose(),Rd),wddot)
-        third = -1 * np.dot(J, self.vee_map(np.dot(a,b) - c))
         
-        M = first + second + third
- 
+        M = self.getM(wd, e_R, e_w, w, Rd, dt,R)
+
         return F,M
 
     def vee_map(self, mat): #converts a 3x3 matrix to a 3x1 matrix
@@ -83,8 +123,9 @@ class Controller:
  
     def rotation_matrix(self, state): #inverse of matrix is its transpose
         phi, theta, sy = state
-        return np.array([ [cos(sy)*cos(theta), cos(sy)*sin(theta)*sin(phi) - sin(sy)*cos(phi), cos(sy)*sin(theta)*cos(phi) + sin(sy)*sin(phi)],\
-                          [sin(sy)*cos(theta), sin(sy)*sin(theta)*sin(phi) + cos(sy)*cos(phi), sin(sy)*sin(theta)*cos(phi) - cos(sy)*sin(phi)],\
-                          [ -1* sin(theta)   , cos(theta)*sin(phi)                           , cos(theta)*cos(phi)                           ]\
+        return np.array([ [cos(sy)*cos(theta),cos(sy)*sin(theta)*sin(phi)-sin(sy)*cos(phi),cos(sy)*sin(theta)*cos(phi)+sin(sy)*sin(phi)],\
+                          [sin(sy)*cos(theta),sin(sy)*sin(theta)*sin(phi)+cos(sy)*cos(phi),sin(sy)*sin(theta)*cos(phi)-cos(sy)*sin(phi)],\
+                          [ -1* sin(theta)   ,cos(theta)*sin(phi)                         , cos(theta)*cos(phi)                        ]\
                         ])
+
 
