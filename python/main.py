@@ -1,43 +1,29 @@
 from quadcopter import Quadcopter
 from controller import Controller
-import matplotlib.pyplot as plt
 import numpy as np
-import pdb
+import ipdb
 import math
 from math import sin, cos, tan, exp
 
+from matplotlib import pyplot
+from mpl_toolkits.mplot3d import Axes3D
+
 if __name__ == '__main__':
-    print "hello world"
+    x_vald = []
+    y_vald = []
+    z_vald = []
+    x_val = []
+    y_val = []
+    z_val = []
     quad = Quadcopter()
-    v = []
-    z = []
-    pre = np.array([0,0,0])
-    time = [x * 0.1 for x in range(0,100)]
-    xd = {}#[0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]
-    vd = {}#[0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)]
-    ad = {} #[0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
-    b1d = {} #[cos(np.pi*t), sin(np.pi)*t, 0]
-
+    cont = Controller()
+    dt = 1 
+    time = [x*dt for x in range(0,100)]
     for t in time:
-        xd[t] = [0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)] 
-        vd[t] = [0.4, 0.4*np.pi*cos(np.pi *t), -0.6*np.pi*sin(np.pi*t)]
-        ad[t] = [0, -0.4*np.pi*np.pi*sin(np.pi *t), -0.6*np.pi*np.pi*cos(np.pi*t)]
-        b1d[t] = [cos(np.pi*t), sin(np.pi)*t, 0]
+        curr_state = quad.curr_state();
+        F, M = cont.update(curr_state, t, dt)
+        quad.update(t,dt,F,M)
+        a = quad.position()
+    #pyplot.plot(time,x_val, 'r',y_val,'g',z_val, 'b') 
+    #pyplot.show()
 
-    print vd 
-    print ad
-    
-    for t in range (0, len(time)):
-        F,M = quad.getFM(0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,0.027*9.81/4,)
-        quad.update(t,0.1,F, M)
-        pos = quad.position()
-        vel = quad.velocity()
-        z.append(pos[2])
-        v.append(vel[2])
-        print pos-pre
-        pre = pos
-
-    plt.plot(time, v, color='lightblue', linewidth=3)
-    #plt.plot(itr, z, color='lightblue', linewidth=3)
-    plt.show()
-    
