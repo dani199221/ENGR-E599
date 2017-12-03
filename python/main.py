@@ -24,6 +24,8 @@ if __name__ == '__main__':
         F, M = cont.update(curr_state, t, dt)
         quad.update(t,dt,F,M)
         a = quad.position()
+        b = cont.get_xd()
+        print a , "  " , b
     #pyplot.plot(time,x_val, 'r',y_val,'g',z_val, 'b') 
     #pyplot.show()
 

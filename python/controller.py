@@ -27,7 +27,12 @@ class Controller:
         self.xd = np.zeros(3)
         self.vd = np.zeros(3)
         self.ad = np.zeros(3)
+    
+    def get_xd(self):
+        return self.xd
 
+    def get_vd(self):
+        return self.vd
     #returns the desired position, velocity and acceleration 
     def get_x_desired(self,t):
         self.xd = np.array([0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]) 
@@ -36,21 +41,21 @@ class Controller:
         return self.xd, self.vd, self.ad
     
     #returns the desired b1d, b2d, b3d
-    def get_bd(self,t, e_v, e_x, ad):
+    def get_Rd(self,t, e_v, e_x, ad):
         b1d = np.array([cos(np.pi*t), sin(np.pi*t), 0]) 
         
         #b3d calculation
         res = -1* self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad 
-        b3d = res/np.linalg.norm(res) #get b3d from eq 12
+        b3d = -1 * res/np.linalg.norm(res) #get b3d from eq 12
 
         #b2d calculation
         b2d = np.cross(b3d, b1d)/np.linalg.norm(np.cross(b3d, b1d)) #get b2d from b3d and b1d
-        b2d = b2d/np.linalg.norm(b2d)
-        
-        #b1d calculation
+
+        #b1d calculation for R matrix
         new_b1d = np.cross(b2d,b3d) #get new b1d from corss product of b2d and b3d
 
-        return new_b1d, b2d, b3d 
+        Rd =  np.array([[b1d[0], b2d[0], b3d[0]], [b1d[1], b2d[1], b3d[1]], [b1d[2], b2d[2], b3d[2]]]) 
+        return Rd 
     
     #returns the desired Force required
     def getF(self,e_x, e_v, ad, R):   
@@ -70,7 +75,7 @@ class Controller:
         
         M = first + second + third
         return M
-    
+   
 
     #returns the desired F and M to the main function
     def update(self, curr_state, t, dt):
@@ -80,16 +85,11 @@ class Controller:
         #get e_x e_v
         e_x = curr_state[0:3] - xd 
         e_v = curr_state[3:6] - vd 
-        print xd
-        print curr_state[0:3]
-        print e_x 
+        print e_x
         
         #get the desired heading directions for the the body frame
-        b1d, b2d, b3d =  self.get_bd(t, e_v, e_x, ad)
+        Rd =  self.get_Rd(t, e_v, e_x, ad)
 
-
-        #ger Rd from b1d, b2d,b3d
-        Rd =  np.array([[b1d[0], b2d[0], b3d[0]], [b1d[1], b2d[1], b3d[1]], [b1d[2], b2d[2], b3d[2]]]) 
         R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
         #get e_R
@@ -99,7 +99,7 @@ class Controller:
         w = curr_state[9:12]
         Rd_dot = (Rd - self.prev_Rd)/dt
         self.prev_Rd = Rd
-        wd = self.vee_map(np.dot(np.linalg.inv(Rd),Rd_dot))
+        wd = self.vee_map(np.dot(Rd_dot,np.linalg.inv(Rd)))
 
         e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
