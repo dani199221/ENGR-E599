@@ -93,7 +93,7 @@ class Controller:
         R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
         #get e_R
-        e_R = 1.0/2 * self.vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
+        e_R = 0.5 * self.vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
         #get e_w and pre requisites
         w = curr_state[9:12]
