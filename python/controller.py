@@ -19,20 +19,27 @@ d = 0.315
 class Controller:
     def __init__(self):
         self.k_x = 16 
-        self.k_v = 5.6
-        self.k_r = 8.81 
-        self.k_w = 2.54 
+        self.k_v = 5.6 
+        self.k_r = 8.81  
+        self.k_w = 2.54
         self.prev_Rd = np.zeros((3,3))
         self.prev_wd = np.zeros(3)
         self.xd = np.zeros(3)
         self.vd = np.zeros(3)
         self.ad = np.zeros(3)
-    
+        self.e_x = 0
+        self.e_v = 0
+        self.e_R = 0
+        self.e_w = 0
+
     def get_xd(self):
         return self.xd
 
     def get_vd(self):
         return self.vd
+
+    def get_errors(self):
+        return self.e_x, self.e_v, self.e_R, self.e_w
     #returns the desired position, velocity and acceleration 
     def get_x_desired(self,t):
         self.xd = np.array([0.4*t, 0.4*sin(np.pi * t), 0.6*cos(np.pi*t)]) 
@@ -45,7 +52,7 @@ class Controller:
         b1d = np.array([cos(np.pi*t), sin(np.pi*t), 0]) 
         
         #b3d calculation
-        res = -1* self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad 
+        res = -self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad 
         b3d = -1 * res/np.linalg.norm(res) #get b3d from eq 12
 
         #b2d calculation
@@ -55,12 +62,13 @@ class Controller:
         new_b1d = np.cross(b2d,b3d) #get new b1d from corss product of b2d and b3d
 
         Rd =  np.array([[b1d[0], b2d[0], b3d[0]], [b1d[1], b2d[1], b3d[1]], [b1d[2], b2d[2], b3d[2]]]) 
-        return Rd 
+        print Rd
+        return Rd
     
     #returns the desired Force required
     def getF(self,e_x, e_v, ad, R):   
 
-        a = -1* (-1* self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad) 
+        a = -1* (-self.k_x*e_x - self.k_v*e_v - mass * np.array([0,0,g]) + mass* ad) 
         return np.dot(a,np.dot(R, e3))
     
     def getM(self, wd, e_R, e_w, w, Rd,dt,R):
@@ -83,32 +91,31 @@ class Controller:
         #get desired position, velocity and acceleration
         xd, vd, ad = self.get_x_desired(t)
         #get e_x e_v
-        e_x = curr_state[0:3] - xd 
-        e_v = curr_state[3:6] - vd 
-        print e_x
+        self.e_x = curr_state[0:3] - xd 
+        self.e_v = curr_state[3:6] - vd 
         
         #get the desired heading directions for the the body frame
-        Rd =  self.get_Rd(t, e_v, e_x, ad)
+        Rd =  self.get_Rd(t, self.e_v, self.e_x, ad)
 
         R = self.rotation_matrix(curr_state[6:9])#get rotation matrix from euler angles
         
-        #get e_R
-        e_R = 0.5 * self.vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
+        #get e_R equation (10)
+        self.e_R = 0.5 * self.vee_map(np.dot(Rd.T, R) - np.dot(R.T, Rd))
         
         #get e_w and pre requisites
         w = curr_state[9:12]
         Rd_dot = (Rd - self.prev_Rd)/dt
         self.prev_Rd = Rd
-        wd = self.vee_map(np.dot(Rd_dot,np.linalg.inv(Rd)))
-
-        e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
+        wd = self.vee_map(np.dot(np.linalg.inv(Rd),Rd_dot))
+        
+        #get e_w equation (11)
+        self.e_w =  w - np.dot (np.dot(R.transpose(), Rd), wd)
 
         #calculate f
-        F = self.getF(e_x, e_v, ad, R)
+        F = self.getF(self.e_x, self.e_v, ad, R)
         #calculate M
-        w = curr_state[9:12]
         
-        M = self.getM(wd, e_R, e_w, w, Rd, dt,R)
+        M = self.getM(wd, self.e_R, self.e_w, w, Rd, dt,R)
 
         return F,M
 
